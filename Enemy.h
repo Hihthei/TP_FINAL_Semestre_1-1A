@@ -57,6 +57,18 @@ typedef struct Enemy_s
     /// @brief Rayon de l'ennemi exprimé dans le référentiel monde.
     /// Il est utilisé dans le moteur physique pour tester les collisions.
     float radius;
+
+	/// \brief Remaining life points of the enemy.
+	int lifePoints;
+
+	/// \brief Last time this entity thrown an attack.
+	int lastAttack;
+
+	void (*update)(struct Enemy_s *self);
+	void (*updatePos)(Vec2 *v, const struct Enemy_s *self);
+	void (*throwAttack)(struct Enemy_s *self);
+	void (*noThrowAttack)(struct Enemy_s *self);
+	bool (*shouldThrowAttack)(const struct Enemy_s *self);
 } Enemy;
 
 /// @brief Crée un nouvel ennemi.

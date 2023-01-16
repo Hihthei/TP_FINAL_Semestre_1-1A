@@ -15,36 +15,31 @@ Vec2 Vec2_Set(float x, float y)
 
 Vec2 Vec2_Add(Vec2 v1, Vec2 v2)
 {
-    // TODO
-    return Vec2_Zero;
+	return Vec2_Set(v1.x+v2.x, v1.y+v2.y);
 }
 
 Vec2 Vec2_Sub(Vec2 v1, Vec2 v2)
 {
-    // TODO
-    return Vec2_Zero;
+	return Vec2_Set(v1.x-v2.x, v1.y-v2.y);
 }
 
 Vec2 Vec2_Scale(Vec2 v, float s)
 {
-    // TODO
-    return Vec2_Zero;
+	return Vec2_Set(v.x*s, v.y*s);
 }
 
 float Vec2_Length(Vec2 v)
 {
-    // TODO
-    return 0.0f;
+	return sqrt(v.x*v.x + v.y*v.y);
 }
 
 Vec2 Vec2_Normalize(Vec2 v)
 {
-    // TODO
-    return Vec2_Zero;
+	float l = Vec2_Length(v);
+	return Vec2_Set(v.x/l, v.y/l);
 }
 
 float Vec2_Distance(Vec2 v1, Vec2 v2)
 {
-    // TODO
-    return 0.0f;
+	return Vec2_Length(Vec2_Sub(v1, v2));
 }

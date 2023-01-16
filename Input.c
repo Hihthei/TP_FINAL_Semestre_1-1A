@@ -58,6 +58,10 @@ void Input_Update(Input *self)
                 self->vAxis = -1.f;
                 break;
 
+			case SDL_SCANCODE_SPACE:
+				self->shootPressed = true;
+				break;
+
             default:
                 break;
             }
@@ -92,6 +96,12 @@ void Input_Update(Input *self)
                 if (self->vAxis < 0.f)
                     self->vAxis = 0.f;
                 break;
+
+			case SDL_SCANCODE_SPACE:
+				if (self->shootPressed) {
+					self->shootPressed = false;
+				}
+				break;
 
             default:
                 break;
