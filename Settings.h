@@ -11,6 +11,9 @@
 //#define FHD
 //#define FULLSCREEN
 
+#define UNUSED(v) (void)v
+static inline void nofunc() {};
+
 #define PIX_TO_WORLD (1.0f / 48.0f)
 
 #ifdef _WIN32

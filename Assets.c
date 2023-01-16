@@ -17,10 +17,10 @@ Assets *Assets_New(SDL_Renderer *renderer)
     TextureSpec texSpecs[] = {
         { &self->layers[0],     "../Assets/Background/layer_01.png"   },
         { &self->layers[1],     "../Assets/Background/layer_02.png"   },
+		{ &self->player,		"../Assets/Player/player.png"		  },
         { &self->playerBullet,  "../Assets/Player/bullet_default.png" },
         { &self->fighter,       "../Assets/Enemy/fighter.png"         },
-        { &self->fighterBullet, "../Assets/Enemy/fighter_bullet.png"  },
-        { &self->player, "../Assets/Player/player.png"},
+		{ &self->fighterBullet, "../Assets/Enemy/fighter_bullet.png"  },
     };
     int texSpecCount = sizeof(texSpecs) / sizeof(TextureSpec);
 

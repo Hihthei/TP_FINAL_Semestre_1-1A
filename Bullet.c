@@ -2,6 +2,10 @@
 #include "Common.h"
 #include "Scene.h"
 
+
+void Bullet_Update_impl(Bullet *, void **, bool);
+void Bullet_Update_pos_impl(Vec2 *v, const Bullet *, void **, bool);
+
 Bullet *Bullet_New(Scene *scene, Vec2 position, Vec2 velocity, int type, float angle)
 {
     Bullet *self = (Bullet *)calloc(1, sizeof(Bullet));
@@ -12,9 +16,16 @@ Bullet *Bullet_New(Scene *scene, Vec2 position, Vec2 velocity, int type, float a
     self->type = type;
     self->angle = angle;
     self->scene = scene;
-    self->fromPlayer = false;
+	self->fromPlayer = false;
 
-    Assets *assets = Scene_GetAssets(scene);
+	self->update = &Bullet_Update_impl;
+	self->updatePos = &Bullet_Update_pos_impl;
+
+	memset(&self->_data[0], 0, sizeof(void *)*2);
+
+	Assets *assets = Scene_GetAssets(scene);
+
+	//fighter_bullet.png
     switch (type)
     {
     case BULLET_FIGHTER:
@@ -41,10 +52,40 @@ Bullet *Bullet_New(Scene *scene, Vec2 position, Vec2 velocity, int type, float a
 void Bullet_Delete(Bullet *self)
 {
     if (!self) return;
+	self->update(NULL, &self->_data[0], true);
+	self->update(NULL, &self->_data[1], true);
     free(self);
 }
 
+void Bullet_Update_pos_impl(Vec2 *v, const Bullet *self, void **d, bool destroy)
+{
+	UNUSED(d);
+	if (destroy) {
+		return;
+	}
+
+	// Mise à jour de la position
+	(*v) = Vec2_Add(self->position, Vec2_Scale(self->velocity, Timer_GetDelta(g_time)));
+}
+
+void Bullet_Update_impl(Bullet *self, void **d, bool destroy)
+{
+	UNUSED(d);
+	if (destroy) {
+		return;
+	}
+
+	self->updatePos(&self->position, self, &self->_data[1], false);
+}
+
 void Bullet_Update(Bullet *self)
+{
+	// On récupère des infos essentielles (communes à tout objet)
+	//Scene *scene = self->scene;
+	self->update(self, &self->_data[0], false);
+}
+
+void Bullet_Render(Bullet *self)
 {
 	// On récupère des infos essentielles (communes à tout objet)
 	Scene *scene = self->scene;
@@ -63,12 +104,4 @@ void Bullet_Update(Bullet *self)
 	dst.y -= 0.50f * dst.h;
 	// On affiche en position dst (unités en pixels)
 	SDL_RenderCopyExF(renderer, self->texture, NULL, &dst, 90.0f, NULL, 0);
-}
-
-void Bullet_Render(Bullet *self)
-{
-	// On récupère des infos essentielles (communes à tout objet)
-	Scene *scene = self->scene;
-	// Mise à jour de la position
-	self->position = Vec2_Add(self->position, Vec2_Scale(self->velocity, Timer_GetDelta(g_time)));
 }

@@ -2,6 +2,12 @@
 #include "Common.h"
 #include "Scene.h"
 
+void Enemy_Update_pos_impl(Vec2 *, Enemy *, void **, bool destroy);
+void Enemy_Update_impl(Enemy *, void **, bool destroy);
+void Enemy_Throw_Attack_impl(Enemy *self, void **, bool destroy);
+void Enemy_No_Throw_Attack_impl(Enemy *self, void **, bool destroy);
+bool Enemy_Should_Throw_Attack_impl(Enemy *self, void **, bool destroy);
+
 Enemy *Enemy_New(Scene *scene, int type, Vec2 position)
 {
     Enemy *self = (Enemy *)calloc(1, sizeof(Enemy));
@@ -13,6 +19,14 @@ Enemy *Enemy_New(Scene *scene, int type, Vec2 position)
     self->state = ENEMY_FIRING;
 	self->lifePoints = 100;
 	self->lastAttack = -1;
+
+	self->update = &Enemy_Update_impl;
+	self->updatePos = &Enemy_Update_pos_impl;
+	self->shouldThrowAttack = &Enemy_Should_Throw_Attack_impl;
+	self->throwAttack = &Enemy_Throw_Attack_impl;
+	self->noThrowAttack = &Enemy_No_Throw_Attack_impl;
+
+	memset(&self->_data[0], 0, sizeof(void *)*5);
 
     Assets *assets = Scene_GetAssets(self->scene);
     switch (type)
@@ -35,20 +49,77 @@ Enemy *Enemy_New(Scene *scene, int type, Vec2 position)
 void Enemy_Delete(Enemy *self)
 {
     if (!self) return;
+
+	//Delete the possible _data fields.
+	self->update(NULL, &self->_data[0], true);
+	self->updatePos(NULL, NULL, &self->_data[1], true);
+	self->throwAttack(NULL, &self->_data[2], true);
+	self->noThrowAttack(NULL, &self->_data[3], true);
+	self->shouldThrowAttack(NULL, &self->_data[4], true);
+
     free(self);
+}
+
+void Enemy_Update_pos_impl(Vec2 *v, Enemy *self, void **d, bool destroy)
+{
+	UNUSED(v);
+	UNUSED(self);
+	UNUSED(d);
+	UNUSED(destroy);
+	// [TODO] Add default func here.
+}
+
+void Enemy_Update_impl(Enemy *self, void **d, bool destroy)
+{
+	UNUSED(d);
+	if (destroy) {
+		return;
+	}
+
+	self->updatePos(&self->position, self, &self->_data[1], false);
+	if (self->shouldThrowAttack(self, &self->_data[4], false) == true) {
+		self->throwAttack(self, &self->_data[2], false);
+	} else {
+		self->noThrowAttack(self, &self->_data[3], false);
+	}
+}
+
+void Enemy_No_Throw_Attack_impl(Enemy *self, void **d, bool destroy)
+{
+	UNUSED(d);
+	if (destroy) {
+		return;
+	}
+
+	self->lastAttack += g_time->elapsed;
+}
+
+void Enemy_Throw_Attack_impl(Enemy *self, void **d, bool destroy)
+{
+	UNUSED(d);
+	if (destroy) {
+		return;
+	}
+
+	self->lastAttack = 0;
+	Vec2 velocity = Vec2_Set(-2.0f, 0.0f);
+	Bullet *bullet = Bullet_New(self->scene, self->position, velocity, BULLET_FIGHTER, 90.0f);
+	bullet->fromPlayer = false;
+	Scene_AppendBullet(self->scene, bullet);
+}
+
+bool Enemy_Should_Throw_Attack_impl(Enemy *self, void **d, bool destroy)
+{
+	UNUSED(d);
+	if (destroy) {
+		return false;
+	}
+	return (self->lastAttack == -1 || self->lastAttack);
 }
 
 void Enemy_Update(Enemy *self)
 {
-	if (self->lastAttack == -1 || self->lastAttack < 5) {
-		self->lastAttack = 0;
-		Vec2 velocity = Vec2_Set(-2.0f, 0.0f);
-		Bullet *bullet = Bullet_New(self->scene, self->position, velocity, BULLET_PLAYER, 90.0f);
-		bullet->fromPlayer = false;
-		Scene_AppendBullet(self->scene, bullet);
-	} else {
-		self->lastAttack += g_time->elapsed;
-	}
+	self->update(self, self->_data[0], false);
 }
 
 void Enemy_Render(Enemy *self)

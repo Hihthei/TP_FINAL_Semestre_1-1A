@@ -2,6 +2,10 @@
 #include "Scene.h"
 #include "Common.h"
 
+
+void Player_Update_impl(Player *, void **, bool);
+void Player_Update_pos_impl(Vec2 *, const struct Player_s *, void **, bool);
+
 Player *Player_New(Scene *scene)
 {
     Player *self = (Player *)calloc(1, sizeof(Player));
@@ -14,6 +18,11 @@ Player *Player_New(Scene *scene)
     self->radius = 0.25f;
 	self->texture = assets->player;
 	self->lastAttack = -1;
+	self->lifePoints = 500;
+	self->playerDead = &nofunc;
+
+	self->update = &Player_Update_impl;
+	self->updatePos = &Player_Update_pos_impl;
 
     return self;
 }
@@ -21,22 +30,45 @@ Player *Player_New(Scene *scene)
 void Player_Delete(Player *self)
 {
     if (!self) return;
+
+	self->update(NULL, &self->_data[0], true);
+	self->updatePos(NULL, NULL, &self->_data[1], true);
+
     free(self);
 }
 
-void Player_Update(Player *self)
+void Player_Update_pos_impl(Vec2 *v, const struct Player_s *self, void **d, bool destroy)
 {
+	UNUSED(d);
+	if (destroy) {
+		return;
+	}
+
 	// On récupère des infos essentielles (communes à tout objet)
 	Scene *scene = self->scene;
 	Input *input = Scene_GetInput(scene);
 	// Mise à jour de la vitesse en fonction de l'état des touches
 	Vec2 velocity = Vec2_Set(input->hAxis, input->vAxis);
 	// Mise à jour de la position
-	self->position = Vec2_Add(self->position, Vec2_Scale(velocity, Timer_GetDelta(g_time)));
+	(*v) = Vec2_Add(self->position, Vec2_Scale(velocity, Timer_GetDelta(g_time)));
+}
+
+void Player_Update_impl(Player *self, void **d, bool destroy)
+{
+	UNUSED(d);
+	if (destroy) {
+		return;
+	}
+
+	// On récupère des infos essentielles (communes à tout objet)
+	Scene *scene = self->scene;
+	Input *input = Scene_GetInput(scene);
+
+	self->updatePos(&self->position, self, &self->_data[1], false);
 
 	if (input->shootPressed) {
 		//Don't let 'em spam it all!
-		if (self->lastAttack !=  -1 && self->lastAttack < 5) {
+		if (self->lastAttack == -1 || self->lastAttack > 50) {
 			Vec2 velocity = Vec2_Set(4.0f, 0.0f);
 			Bullet *bullet = Bullet_New(self->scene, self->position, velocity, BULLET_PLAYER, 90.0f);
 			bullet->fromPlayer = true;
@@ -46,6 +78,11 @@ void Player_Update(Player *self)
 			self->lastAttack += g_time->elapsed;
 		}
 	}
+}
+
+void Player_Update(Player *self)
+{
+	self->update(self, &self->_data[0], false);
 }
 
 void Player_Render(Player *self)
@@ -70,7 +107,12 @@ void Player_Render(Player *self)
 	SDL_RenderCopyExF(renderer, self->texture, NULL, &dst, 90.0f, NULL, 0);
 }
 
-void Player_Damage(Player *self, int damage)
+void Player_Damage(Player *self, int damage, void *bullet)
 {
-	printf("Le potooship a mal!\n");
+	UNUSED(bullet);
+
+	self->lifePoints -= damage;
+	if (self->lifePoints <= 0) {
+		self->playerDead();
+	}
 }

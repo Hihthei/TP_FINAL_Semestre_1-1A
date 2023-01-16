@@ -52,6 +52,11 @@ typedef struct Bullet_s
 
     /// @brief Angle de rotation du la texture pour le rendu.
     float angle;
+
+	void (*update)(struct Bullet_s *self, void **data, bool destroy);
+	void (*updatePos)(Vec2 *v, const struct Bullet_s *self, void **data, bool destroy);
+	void *_data[2];
+
 } Bullet;
 
 /// @brief Crée un nouveau projectile. Ce dernier doit ensuite être ajouté à la

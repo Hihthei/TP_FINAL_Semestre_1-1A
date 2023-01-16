@@ -20,21 +20,21 @@ void Scene_Delete(Scene *self)
 {
     if (!self) return;
 
-    Assets_Delete(self->assets);
-    Camera_Delete(self->camera);
-    Input_Delete(self->input);
-    Player_Delete(self->player);
+	for (int i = 0; i < self->enemyCount; i++)
+	{
+		Enemy_Delete(self->enemies[i]);
+		self->enemies[i] = NULL;
+	}
+	for (int i = 0; i < self->bulletCount; i++)
+	{
+		Bullet_Delete(self->bullets[i]);
+		self->bullets[i] = NULL;
+	}
 
-    for (int i = 0; i < self->enemyCount; i++)
-    {
-        Enemy_Delete(self->enemies[i]);
-        self->enemies[i] = NULL;
-    }
-    for (int i = 0; i < self->bulletCount; i++)
-    {
-        Bullet_Delete(self->bullets[i]);
-        self->bullets[i] = NULL;
-    }
+	Player_Delete(self->player);
+	Camera_Delete(self->camera);
+	Input_Delete(self->input);
+	Assets_Delete(self->assets);
 
     free(self);
 }
@@ -110,7 +110,7 @@ bool Scene_Update(Scene *self)
             if (dist < bullet->radius + player->radius)
             {
                 // Inflige des dommages au joueur
-                Player_Damage(player, 1);
+				Player_Damage(player, 1, (void *)bullet);
 
                 // Supprime le tir
                 Scene_RemoveBullet(self, i);
