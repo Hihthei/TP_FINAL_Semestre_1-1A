@@ -41,9 +41,6 @@ typedef struct Player_s
 
 	/// \brief Last time the user has raised an attack.
 	float lastAttack;
-
-	void (*update)(struct Player_s *self);
-	void (*updatePos)(Vec2 *v, const struct Player_s *self);
 } Player;
 
 /// @brief Crée un nouveau joueur.

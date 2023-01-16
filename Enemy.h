@@ -63,12 +63,6 @@ typedef struct Enemy_s
 
 	/// \brief Last time this entity thrown an attack.
 	int lastAttack;
-
-	void (*update)(struct Enemy_s *self);
-	void (*updatePos)(Vec2 *v, const struct Enemy_s *self);
-	void (*throwAttack)(struct Enemy_s *self);
-	void (*noThrowAttack)(struct Enemy_s *self);
-	bool (*shouldThrowAttack)(const struct Enemy_s *self);
 } Enemy;
 
 /// @brief Crée un nouvel ennemi.

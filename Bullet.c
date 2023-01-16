@@ -2,10 +2,6 @@
 #include "Common.h"
 #include "Scene.h"
 
-
-void Bullet_Update_impl(Bullet *);
-void Bullet_Update_pos_impl(Vec2 *v, const Bullet *s);
-
 Bullet *Bullet_New(Scene *scene, Vec2 position, Vec2 velocity, int type, float angle)
 {
     Bullet *self = (Bullet *)calloc(1, sizeof(Bullet));
@@ -16,14 +12,9 @@ Bullet *Bullet_New(Scene *scene, Vec2 position, Vec2 velocity, int type, float a
     self->type = type;
     self->angle = angle;
     self->scene = scene;
-	self->fromPlayer = false;
+    self->fromPlayer = false;
 
-	self->update = &Bullet_Update_impl;
-	self->updatePos = &Bullet_Update_pos_impl;
-
-	Assets *assets = Scene_GetAssets(scene);
-
-	//fighter_bullet.png
+    Assets *assets = Scene_GetAssets(scene);
     switch (type)
     {
     case BULLET_FIGHTER:
@@ -53,25 +44,7 @@ void Bullet_Delete(Bullet *self)
     free(self);
 }
 
-void Bullet_Update_pos_impl(Vec2 *v, const Bullet *self)
-{
-	// Mise à jour de la position
-	(*v) = Vec2_Add(self->position, Vec2_Scale(self->velocity, Timer_GetDelta(g_time)));
-}
-
-void Bullet_Update_impl(Bullet *self)
-{
-	self->updatePos(&self->position, self);
-}
-
 void Bullet_Update(Bullet *self)
-{
-	// On récupère des infos essentielles (communes à tout objet)
-	//Scene *scene = self->scene;
-	self->update(self);
-}
-
-void Bullet_Render(Bullet *self)
 {
 	// On récupère des infos essentielles (communes à tout objet)
 	Scene *scene = self->scene;
@@ -90,4 +63,12 @@ void Bullet_Render(Bullet *self)
 	dst.y -= 0.50f * dst.h;
 	// On affiche en position dst (unités en pixels)
 	SDL_RenderCopyExF(renderer, self->texture, NULL, &dst, 90.0f, NULL, 0);
+}
+
+void Bullet_Render(Bullet *self)
+{
+	// On récupère des infos essentielles (communes à tout objet)
+	Scene *scene = self->scene;
+	// Mise à jour de la position
+	self->position = Vec2_Add(self->position, Vec2_Scale(self->velocity, Timer_GetDelta(g_time)));
 }

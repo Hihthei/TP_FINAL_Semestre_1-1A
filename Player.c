@@ -2,10 +2,6 @@
 #include "Scene.h"
 #include "Common.h"
 
-
-void Player_Update_impl(Player *);
-void Player_Update_pos_impl(Vec2 *, const struct Player_s *);
-
 Player *Player_New(Scene *scene)
 {
     Player *self = (Player *)calloc(1, sizeof(Player));
@@ -19,9 +15,6 @@ Player *Player_New(Scene *scene)
 	self->texture = assets->player;
 	self->lastAttack = -1;
 
-	self->update = &Player_Update_impl;
-	self->updatePos = &Player_Update_pos_impl;
-
     return self;
 }
 
@@ -31,7 +24,7 @@ void Player_Delete(Player *self)
     free(self);
 }
 
-void Player_Update_pos_impl(Vec2 *v, const struct Player_s *self)
+void Player_Update(Player *self)
 {
 	// On récupère des infos essentielles (communes à tout objet)
 	Scene *scene = self->scene;
@@ -39,20 +32,11 @@ void Player_Update_pos_impl(Vec2 *v, const struct Player_s *self)
 	// Mise à jour de la vitesse en fonction de l'état des touches
 	Vec2 velocity = Vec2_Set(input->hAxis, input->vAxis);
 	// Mise à jour de la position
-	(*v) = Vec2_Add(self->position, Vec2_Scale(velocity, Timer_GetDelta(g_time)));
-}
-
-void Player_Update_impl(Player *self)
-{
-	// On récupère des infos essentielles (communes à tout objet)
-	Scene *scene = self->scene;
-	Input *input = Scene_GetInput(scene);
-
-	self->updatePos(&self->position, self);
+	self->position = Vec2_Add(self->position, Vec2_Scale(velocity, Timer_GetDelta(g_time)));
 
 	if (input->shootPressed) {
 		//Don't let 'em spam it all!
-		if (self->lastAttack == -1 || self->lastAttack > 50) {
+		if (self->lastAttack !=  -1 && self->lastAttack < 5) {
 			Vec2 velocity = Vec2_Set(4.0f, 0.0f);
 			Bullet *bullet = Bullet_New(self->scene, self->position, velocity, BULLET_PLAYER, 90.0f);
 			bullet->fromPlayer = true;
@@ -62,11 +46,6 @@ void Player_Update_impl(Player *self)
 			self->lastAttack += g_time->elapsed;
 		}
 	}
-}
-
-void Player_Update(Player *self)
-{
-	self->update(self);
 }
 
 void Player_Render(Player *self)
@@ -93,4 +72,5 @@ void Player_Render(Player *self)
 
 void Player_Damage(Player *self, int damage)
 {
+	printf("Le potooship a mal!\n");
 }
