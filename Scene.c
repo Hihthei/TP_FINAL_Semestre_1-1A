@@ -1,11 +1,14 @@
 #include "Scene.h"
 
+#include "patterns.h"
+
+
 Scene *Scene_New(SDL_Renderer *renderer)
 {
     Scene *self = (Scene *)calloc(1, sizeof(Scene));
     AssertNew(self);
 
-    self->renderer = renderer;
+	self->renderer = renderer;
 
     self->assets = Assets_New(renderer);
     self->camera = Camera_New(LOGICAL_WIDTH, LOGICAL_HEIGHT);
@@ -47,6 +50,9 @@ void Scene_UpdateLevel(Scene *self)
     if (self->waveIdx == 0)
     {
         Enemy *enemy = Enemy_New(self, ENEMY_FIGHTER, Vec2_Set(15.0f, 4.5f));
+
+		enemy->updatePos = get_pattern(PATTERN_ENEMY_MOVE, 0);
+
         Scene_AppendEnemy(self, enemy);
         self->waveIdx++;
     }
@@ -66,7 +72,7 @@ bool Scene_Update(Scene *self)
     while (i < self->bulletCount)
     {
         Bullet *bullet = self->bullets[i];
-        bool removed = false;
+		bool removed = false;
 
         Bullet_Update(bullet);
 
@@ -80,7 +86,7 @@ bool Scene_Update(Scene *self)
         {
             // Supprime le tir
             Scene_RemoveBullet(self, i);
-            removed = true;
+			//removed = true;
             continue;
         }
 
@@ -98,7 +104,7 @@ bool Scene_Update(Scene *self)
 
                     // Supprime le tir
                     Scene_RemoveBullet(self, i);
-                    removed = true;
+					removed = true;
                     break;
                 }
             }
@@ -112,17 +118,17 @@ bool Scene_Update(Scene *self)
                 // Inflige des dommages au joueur
 				Player_Damage(player, 1, (void *)bullet);
 
-                // Supprime le tir
+				// Supprime le tir
                 Scene_RemoveBullet(self, i);
-                removed = true;
+				removed = true;
             }
         }
 
         // Passe au prochain tir
-        if (removed == false)
+		if (removed == false)
         {
             i++;
-        }
+		}
     }
 
     // -------------------------------------------------------------------------
@@ -142,6 +148,12 @@ bool Scene_Update(Scene *self)
             Scene_RemoveEnemy(self, i);
             removed = true;
         }
+
+		//Look for a colision.
+		if (Vec2_Distance(player->position, enemy->position) <= (enemy->radius + player->radius)) {
+			//Trigger the collision.
+			Player_Ship_Collision(player, enemy);
+		}
 
         // Passe au prochain ennemi
         if (removed == false)

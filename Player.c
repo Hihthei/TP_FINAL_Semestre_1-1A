@@ -19,10 +19,12 @@ Player *Player_New(Scene *scene)
 	self->texture = assets->player;
 	self->lastAttack = -1;
 	self->lifePoints = 500;
-	self->playerDead = &nofunc;
 
 	self->update = &Player_Update_impl;
 	self->updatePos = &Player_Update_pos_impl;
+	self->playerDead = &nofunc;
+	self->playerCollision = &nofunc;
+
 
     return self;
 }
@@ -107,6 +109,7 @@ void Player_Render(Player *self)
 	SDL_RenderCopyExF(renderer, self->texture, NULL, &dst, 90.0f, NULL, 0);
 }
 
+//Bullet might be null if we collided with another ship.
 void Player_Damage(Player *self, int damage, void *bullet)
 {
 	UNUSED(bullet);
@@ -115,4 +118,13 @@ void Player_Damage(Player *self, int damage, void *bullet)
 	if (self->lifePoints <= 0) {
 		self->playerDead();
 	}
+}
+
+void Player_Ship_Collision(Player *self, Enemy *e)
+{
+	printf("Collision detected!\n");
+	//Generates damages to both the ship and the player's one.
+	Enemy_Damage(e, 30);
+	Player_Damage(self, 30, NULL);
+	self->playerCollision();
 }

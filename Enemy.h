@@ -62,7 +62,7 @@ typedef struct Enemy_s
 	int lifePoints;
 
 	/// \brief Last time this entity thrown an attack.
-	int lastAttack;
+	float lastAttack;
 
 	void (*update)(struct Enemy_s *self, void **data, bool destroy);
 	void (*updatePos)(Vec2 *v, struct Enemy_s *self, void **data, bool destroy);

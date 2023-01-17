@@ -4,6 +4,7 @@
 #include "Math.h"
 
 typedef struct Scene_s Scene;
+typedef struct Enemy_s Enemy;
 
 /// @brief Enumération représentant les états possibles du joueur.
 typedef enum PlayerState_e
@@ -47,8 +48,9 @@ typedef struct Player_s
 
 	void (*update)(struct Player_s *self, void **d, bool destroy);
 	void (*updatePos)(Vec2 *v, const struct Player_s *self, void **d, bool destroy);
+	void (*playerCollision)();
 	void (*playerDead)();
-	void *_data[2];
+	void *_data[3];
 
 } Player;
 
@@ -73,3 +75,8 @@ void Player_Render(Player *self);
 /// @param self le joueur.
 /// @param damage la quantité de dommages (nombre de points de vie à perdre).
 void Player_Damage(Player *self, int damage, void *bullet);
+
+/// \brief Player_Ship_Collision
+/// \param self the player
+/// \param source, the ship that collapsed with the player.
+void Player_Ship_Collision(Player *self, Enemy *source);
