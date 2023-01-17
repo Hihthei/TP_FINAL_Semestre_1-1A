@@ -2,6 +2,7 @@
 
 #include "Settings.h"
 #include "Math.h"
+#include "patterns.h"
 
 typedef struct Scene_s Scene;
 
@@ -53,9 +54,9 @@ typedef struct Bullet_s
     /// @brief Angle de rotation du la texture pour le rendu.
     float angle;
 
-	void (*update)(struct Bullet_s *self, void **data, bool destroy);
-	void (*updatePos)(Vec2 *v, const struct Bullet_s *self, void **data, bool destroy);
-	void *_data[2];
+	void_bullet_func_ptr update;
+	void_bullet_func_ptr updatePos;
+	PatternData _data[2];
 
 } Bullet;
 

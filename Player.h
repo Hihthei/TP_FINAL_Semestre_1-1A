@@ -2,6 +2,7 @@
 
 #include "Settings.h"
 #include "Math.h"
+#include "patterns.h"
 
 typedef struct Scene_s Scene;
 typedef struct Enemy_s Enemy;
@@ -46,11 +47,11 @@ typedef struct Player_s
 	/// \brief Remaining life
 	int lifePoints;
 
-	void (*update)(struct Player_s *self, void **d, bool destroy);
-	void (*updatePos)(Vec2 *v, const struct Player_s *self, void **d, bool destroy);
-	void (*playerCollision)();
-	void (*playerDead)();
-	void *_data[3];
+	void_player_func_ptr update;
+	void_player_func_ptr updatePos;
+	func_ptr playerCollision;
+	func_ptr playerDead;
+	PatternData _data[2];
 
 } Player;
 

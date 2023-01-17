@@ -25,17 +25,8 @@ typedef struct Overlay_t
 	SDL_Color color;
 } Overlay;
 
-typedef struct Label_t
-{
-	UiElement base;
-	const char *text;
-	SDL_Texture *message;
-	SDL_Surface *surfaceMessage;
-} Label;
-
 UiElement *ui_element_LifeBar_new();
 UiElement *ui_element_Overlay_new();
-UiElement *ui_element_Label_new(const char *text, Scene *scene);
 
 void ui_element_delete(UiElement *self);
 void ui_element_render(UiElement *self, Scene *s);

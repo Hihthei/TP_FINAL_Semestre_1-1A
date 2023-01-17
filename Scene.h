@@ -17,9 +17,16 @@
 // Nombre maximal de projectiles actifs dans un niveau.
 #define BULLET_CAPACITY 256
 
+// Maximum of UI Elements (Components) that the scene can hold.
 #define UIC_CAPACITY 32
 
+// Maximum number of waves.
+#define WAVES_CAPACITY 10
+
 struct UiElement_t;
+struct Scene_s;
+
+typedef void (*void_scene_level_func_ptr)(struct Scene_s *);
 
 /// @brief Structure représentant la scène principale du jeu (niveau).
 typedef struct Scene_s
@@ -51,18 +58,28 @@ typedef struct Scene_s
     /// @brief Nombre de projectiles courrants.
     int bulletCount;
 
+	/// @brief Les ?l?ments visuels ind?pendants de la sc?ne.
 	struct UiElement_t *elements[UIC_CAPACITY];
+
+	/// @brief Nombres d'?l?ments visuels hors sc?ne.
 	int uicCount;
 
     /// @brief Indice de la vague d'ennemis courrante.
     /// Utilisé pour implémenter un niveau complet.
     int waveIdx;
+
+	/// @brief Functions handling generation of the different levels.
+	void_scene_level_func_ptr waves[WAVES_CAPACITY];
 } Scene;
 
 /// @brief Crée la scène principale du jeu.
 /// @param renderer moteur de rendu.
 /// @return La scène créée.
 Scene *Scene_New(SDL_Renderer *renderer);
+
+/// \brief Triggers loading of required resources.
+/// \param self la sc?ne.
+void Scene_Load(Scene *self);
 
 /// @brief Détruit la scène principale.
 /// @param self la scène.

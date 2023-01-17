@@ -2,11 +2,9 @@
 #include "Common.h"
 #include "Scene.h"
 
-void Enemy_Update_pos_impl(Vec2 *, Enemy *, void **, bool destroy);
-void Enemy_Update_impl(Enemy *, void **, bool destroy);
-void Enemy_Throw_Attack_impl(Enemy *self, void **, bool destroy);
-void Enemy_No_Throw_Attack_impl(Enemy *self, void **, bool destroy);
-bool Enemy_Should_Throw_Attack_impl(Enemy *self, void **, bool destroy);
+void Enemy_Update_pos_impl(Enemy *, PatternData *);
+void Enemy_Update_impl(Enemy *, PatternData *);
+void Enemy_Throw_Attack_impl(Enemy *self, PatternData *);
 
 Enemy *Enemy_New(Scene *scene, int type, Vec2 position)
 {
@@ -17,16 +15,15 @@ Enemy *Enemy_New(Scene *scene, int type, Vec2 position)
     self->position = position;
     self->type = type;
     self->state = ENEMY_FIRING;
-	self->lifePoints = 100;
+	self->lifePoints = 20;
 	self->lastAttack = -1;
 
 	self->update = &Enemy_Update_impl;
 	self->updatePos = &Enemy_Update_pos_impl;
-	self->shouldThrowAttack = &Enemy_Should_Throw_Attack_impl;
 	self->throwAttack = &Enemy_Throw_Attack_impl;
-	self->noThrowAttack = &Enemy_No_Throw_Attack_impl;
 
-	memset(&self->_data[0], 0, sizeof(void *)*5);
+	memset(&self->_data[0], 0, sizeof(PatternData)*3);
+	set_patterns_scene(&self->_data[0], 3, scene);
 
     Assets *assets = Scene_GetAssets(self->scene);
     switch (type)
@@ -50,68 +47,40 @@ void Enemy_Delete(Enemy *self)
 {
     if (!self) return;
 
-	//Delete the possible _data fields.
-	self->update(NULL, &self->_data[0], true);
-	self->updatePos(NULL, NULL, &self->_data[1], true);
-	self->throwAttack(NULL, &self->_data[2], true);
-	self->noThrowAttack(NULL, &self->_data[3], true);
-	self->shouldThrowAttack(NULL, &self->_data[4], true);
+	invalidate_patterns_data(&self->_data[0], 3);
+	self->update(NULL, &self->_data[0]);
+	self->updatePos(NULL, &self->_data[1]);
+	self->throwAttack(NULL, &self->_data[2]);
 
     free(self);
 }
 
-void Enemy_Update_pos_impl(Vec2 *v, Enemy *self, void **d, bool destroy)
+void Enemy_Update_pos_impl(Enemy *self, PatternData *d)
 {
-	UNUSED(v);
 	UNUSED(self);
 	UNUSED(d);
-	UNUSED(destroy);
 	// [TODO] Add default func here.
 }
 
-void Enemy_Update_impl(Enemy *self, void **d, bool destroy)
+void Enemy_Update_impl(Enemy *self, PatternData *d)
 {
-	UNUSED(d);
-	if (destroy) {
+	if (d->destroy) {
 		return;
 	}
 
-	self->updatePos(&self->position, self, &self->_data[1], false);
-	if (self->shouldThrowAttack(self, &self->_data[4], false) == true) {
-		self->throwAttack(self, &self->_data[2], false);
-	} else {
-		self->noThrowAttack(self, &self->_data[3], false);
-	}
+	self->updatePos(self, &self->_data[1]);
+	self->throwAttack(self, &self->_data[2]);
 }
 
-void Enemy_No_Throw_Attack_impl(Enemy *self, void **d, bool destroy)
+void Enemy_Throw_Attack_impl(Enemy *self, PatternData *d)
 {
+	UNUSED(self);
 	UNUSED(d);
-	if (destroy) {
-		return;
-	}
-
-	self->lastAttack += g_time->elapsed;
 }
 
-void Enemy_Throw_Attack_impl(Enemy *self, void **d, bool destroy)
+bool Enemy_Should_Throw_Attack_impl(Enemy *self, PatternData *d)
 {
-	UNUSED(d);
-	if (destroy) {
-		return;
-	}
-
-	self->lastAttack = 0;
-	Vec2 velocity = Vec2_Set(-2.0f, 0.0f);
-	Bullet *bullet = Bullet_New(self->scene, self->position, velocity, BULLET_FIGHTER, 90.0f);
-	bullet->fromPlayer = false;
-	Scene_AppendBullet(self->scene, bullet);
-}
-
-bool Enemy_Should_Throw_Attack_impl(Enemy *self, void **d, bool destroy)
-{
-	UNUSED(d);
-	if (destroy) {
+	if (d->destroy) {
 		return false;
 	}
 	return (self->lastAttack == -1 || self->lastAttack);
@@ -119,7 +88,7 @@ bool Enemy_Should_Throw_Attack_impl(Enemy *self, void **d, bool destroy)
 
 void Enemy_Update(Enemy *self)
 {
-	self->update(self, self->_data[0], false);
+	self->update(self, &self->_data[0]);
 }
 
 void Enemy_Render(Enemy *self)

@@ -3,6 +3,8 @@ CONFIG += console
 CONFIG -= app_bundle
 CONFIG -= qt
 
+CONFIG += debug
+
 SOURCES += \
         Assets.c \
         Bullet.c \
@@ -14,7 +16,9 @@ SOURCES += \
         Player.c \
         Scene.c \
         Timer.c \
-        main.c
+        main.c \
+        patterns.c \
+        uicomponents.c
 
 HEADERS += \
     Assets.h \
@@ -27,6 +31,8 @@ HEADERS += \
     Player.h \
     Scene.h \
     Settings.h \
-    Timer.h
+    Timer.h \
+    patterns.h \
+    uicomponents.h
 
-LIBS += -lm -lSDL2 -lSDL2_image -lSDL2_mixer
+LIBS += -lm -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf

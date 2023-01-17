@@ -3,8 +3,8 @@
 #include "Common.h"
 
 
-void Player_Update_impl(Player *, void **, bool);
-void Player_Update_pos_impl(Vec2 *, const struct Player_s *, void **, bool);
+void Player_Update_impl(Player *, PatternData *);
+void Player_Update_pos_impl(struct Player_s *, PatternData *);
 
 Player *Player_New(Scene *scene)
 {
@@ -20,12 +20,13 @@ Player *Player_New(Scene *scene)
 	self->lastAttack = -1;
 	self->lifePoints = 100;
 
-
 	self->update = &Player_Update_impl;
 	self->updatePos = &Player_Update_pos_impl;
 	self->playerDead = &nofunc;
 	self->playerCollision = &nofunc;
 
+	memset(&self->_data[0], 0, sizeof(PatternData)*2);
+	set_patterns_scene(&self->_data[0], 2, scene);
 
     return self;
 }
@@ -34,16 +35,16 @@ void Player_Delete(Player *self)
 {
     if (!self) return;
 
-	self->update(NULL, &self->_data[0], true);
-	self->updatePos(NULL, NULL, &self->_data[1], true);
+	invalidate_patterns_data(self->_data, 2);
+	self->update(NULL, &self->_data[0]);
+	self->updatePos(NULL, &self->_data[1]);
 
     free(self);
 }
 
-void Player_Update_pos_impl(Vec2 *v, const struct Player_s *self, void **d, bool destroy)
+void Player_Update_pos_impl(Player *self, PatternData *d)
 {
-	UNUSED(d);
-	if (destroy) {
+	if (d->destroy) {
 		return;
 	}
 
@@ -51,15 +52,19 @@ void Player_Update_pos_impl(Vec2 *v, const struct Player_s *self, void **d, bool
 	Scene *scene = self->scene;
 	Input *input = Scene_GetInput(scene);
 	// Mise à jour de la vitesse en fonction de l'état des touches
-	Vec2 velocity = Vec2_Set(input->hAxis, input->vAxis);
+	Vec2 velocity = Vec2_Scale(Vec2_Set(input->hAxis, input->vAxis), 2);
 	// Mise à jour de la position
-	(*v) = Vec2_Add(self->position, Vec2_Scale(velocity, Timer_GetDelta(g_time)));
+	self->position = Vec2_Add(self->position, Vec2_Scale(velocity, Timer_GetDelta(g_time)));
+	if (self->position.x < 0) {
+	} else if (self->position.x > 16) {
+	} else if (self->position.y < 0) {
+	} else if (self->position.y > 9) {
+	}
 }
 
-void Player_Update_impl(Player *self, void **d, bool destroy)
+void Player_Update_impl(Player *self, PatternData *d)
 {
-	UNUSED(d);
-	if (destroy) {
+	if (d->destroy) {
 		return;
 	}
 
@@ -67,7 +72,7 @@ void Player_Update_impl(Player *self, void **d, bool destroy)
 	Scene *scene = self->scene;
 	Input *input = Scene_GetInput(scene);
 
-	self->updatePos(&self->position, self, &self->_data[1], false);
+	self->updatePos(self, &self->_data[1]);
 
 	if (input->shootPressed) {
 		//Don't let 'em spam it all!
@@ -85,7 +90,7 @@ void Player_Update_impl(Player *self, void **d, bool destroy)
 
 void Player_Update(Player *self)
 {
-	self->update(self, &self->_data[0], false);
+	self->update(self, &self->_data[0]);
 }
 
 void Player_Render(Player *self)

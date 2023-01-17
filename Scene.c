@@ -56,6 +56,7 @@ void Scene_UpdateLevel(Scene *self)
         Enemy *enemy = Enemy_New(self, ENEMY_FIGHTER, Vec2_Set(15.0f, 4.5f));
 
 		enemy->updatePos = get_pattern(PATTERN_ENEMY_MOVE, 0);
+		enemy->throwAttack = get_pattern(PATTERN_ENEMY_THROW, 0);
 
         Scene_AppendEnemy(self, enemy);
         self->waveIdx++;
@@ -178,10 +179,10 @@ bool Scene_Update(Scene *self)
 
 	//Met ? jour l'interface.
 	for (int i = 0; i < self->uicCount; i++) {
-		ui_element_render(self->elements[i], self);
+		ui_element_update(self->elements[i], self);
 	}
 
-    return self->input->quitPressed;
+	return (self->input->quitPressed || self->player->lifePoints <= 0);
 }
 
 void Scene_Render(Scene *self)

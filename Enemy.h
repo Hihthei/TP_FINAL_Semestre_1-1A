@@ -2,6 +2,7 @@
 
 #include "Settings.h"
 #include "Math.h"
+#include "patterns.h"
 
 typedef struct Scene_s Scene;
 
@@ -67,14 +68,10 @@ typedef struct Enemy_s
 	/// \brief Last time this entity thrown an attack.
 	float lastAttack;
 
-	
-
-	void (*update)(struct Enemy_s *self, void **data, bool destroy);
-	void (*updatePos)(Vec2 *v, struct Enemy_s *self, void **data, bool destroy);
-	void (*throwAttack)(struct Enemy_s *self, void **data, bool destroy);
-	void (*noThrowAttack)(struct Enemy_s *self, void **data, bool destroy);
-	bool (*shouldThrowAttack)(struct Enemy_s *self, void **data, bool destroy);
-	void *_data[5]; //Holds additional data for the functions. Do not forget to update the memset size on change.
+	void_enemy_func_ptr update;
+	void_enemy_func_ptr updatePos;
+	void_enemy_func_ptr throwAttack;
+	PatternData _data[3]; //Holds additional data for the functions. Do not forget to update the memset size on change.
 } Enemy;
 
 /// @brief Crée un nouvel ennemi.

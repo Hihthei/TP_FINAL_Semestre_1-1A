@@ -3,6 +3,8 @@
 #include "Common.h"
 #include "Timer.h"
 #include "Scene.h"
+#include "uicomponents.h"
+#include "Math.h"
 
 int main(int argc, char *argv[])
 {
@@ -56,11 +58,16 @@ int main(int argc, char *argv[])
 
     Scene *scene = Scene_New(renderer);
 
+	UiElement *lb = ui_element_LifeBar_new();
+	((LifeBar *)lb)->base.size = Vec2_Set(1.4f, 0.3f);
+	((LifeBar *)lb)->base.position = Vec2_Set(1, 1);
+	Scene_AddUiElement(scene, (UiElement *)lb);
+
     while (true)
     {
         // Met à jour le temps
         Timer_Update(g_time);
-		printf("%f FPS\n", 60/Timer_GetElapsed(g_time));
+		//printf("%f FPS\n", 60/Timer_GetElapsed(g_time));
 
         // Met à jour la scène
         bool quitLoop = Scene_Update(scene);

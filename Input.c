@@ -6,6 +6,8 @@ Input *Input_New()
     Input *self = (Input *)calloc(1, sizeof(Input));
     AssertNew(self);
 
+	self->mousePress = false;
+
     return self;
 }
 
@@ -18,6 +20,7 @@ void Input_Delete(Input *self)
 void Input_Update(Input *self)
 {
     self->quitPressed = false;
+	self->mouseRelease = false;
 
     SDL_Event evt;
     while (SDL_PollEvent(&evt))
@@ -107,6 +110,18 @@ void Input_Update(Input *self)
                 break;
             }
             break;
+		case SDL_MOUSEMOTION:
+			SDL_GetGlobalMouseState(&self->mouseX, &self->mouseY);
+			break;
+		case SDL_MOUSEBUTTONDOWN:
+			self->mousePress = true;
+			break;
+		case SDL_MOUSEBUTTONUP:
+			if (self->mousePress) {
+				self->mouseRelease = true;
+				self->mousePress = false;
+			}
+			break;
         }
     }
 }

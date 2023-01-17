@@ -3,8 +3,8 @@
 #include "Scene.h"
 
 
-void Bullet_Update_impl(Bullet *, void **, bool);
-void Bullet_Update_pos_impl(Vec2 *v, const Bullet *, void **, bool);
+void Bullet_Update_impl(Bullet *, PatternData *);
+void Bullet_Update_pos_impl(Bullet *, PatternData *);
 
 Bullet *Bullet_New(Scene *scene, Vec2 position, Vec2 velocity, int type, float angle)
 {
@@ -21,7 +21,8 @@ Bullet *Bullet_New(Scene *scene, Vec2 position, Vec2 velocity, int type, float a
 	self->update = &Bullet_Update_impl;
 	self->updatePos = &Bullet_Update_pos_impl;
 
-	memset(&self->_data[0], 0, sizeof(void *)*2);
+	memset(&self->_data[0], 0, sizeof(PatternData)*2);
+	set_patterns_scene(&self->_data[0], 2, scene);
 
 	Assets *assets = Scene_GetAssets(scene);
 
@@ -52,37 +53,38 @@ Bullet *Bullet_New(Scene *scene, Vec2 position, Vec2 velocity, int type, float a
 void Bullet_Delete(Bullet *self)
 {
     if (!self) return;
-	self->update(NULL, &self->_data[0], true);
-	self->update(NULL, &self->_data[1], true);
+
+	invalidate_patterns_data(&self->_data[0], 2);
+	self->update(NULL, &self->_data[0]);
+	self->update(NULL, &self->_data[1]);
+
     free(self);
 }
 
-void Bullet_Update_pos_impl(Vec2 *v, const Bullet *self, void **d, bool destroy)
+void Bullet_Update_pos_impl(Bullet *self, PatternData *d)
 {
-	UNUSED(d);
-	if (destroy) {
+	if (d->destroy) {
 		return;
 	}
 
 	// Mise à jour de la position
-	(*v) = Vec2_Add(self->position, Vec2_Scale(self->velocity, Timer_GetDelta(g_time)));
+	self->position = Vec2_Add(self->position, Vec2_Scale(self->velocity, Timer_GetDelta(g_time)));
 }
 
-void Bullet_Update_impl(Bullet *self, void **d, bool destroy)
+void Bullet_Update_impl(Bullet *self, PatternData *d)
 {
-	UNUSED(d);
-	if (destroy) {
+	if (d->destroy) {
 		return;
 	}
 
-	self->updatePos(&self->position, self, &self->_data[1], false);
+	self->updatePos(self, &self->_data[1]);
 }
 
 void Bullet_Update(Bullet *self)
 {
 	// On récupère des infos essentielles (communes à tout objet)
 	//Scene *scene = self->scene;
-	self->update(self, &self->_data[0], false);
+	self->update(self, &self->_data[0]);
 }
 
 void Bullet_Render(Bullet *self)

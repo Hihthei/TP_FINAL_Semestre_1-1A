@@ -26,6 +26,12 @@ typedef struct Input_s
     /// Une valeur négative désigne un déplacement vers le bas.
     /// Une valeur positive désigne un déplacement vers le haut.
     float vAxis;
+
+	bool mousePress;
+	bool mouseRelease;
+	int mouseX;
+	int mouseY;
+
 } Input;
 
 /// @brief Crée un nouveau gestionnaire des entrées utilisateur.
