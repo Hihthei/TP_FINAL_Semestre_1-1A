@@ -26,6 +26,7 @@
 
 void basic_update_pos_pattern(Vec2 *v, Enemy *self, void **d, bool destroy)
 {
+	UNUSED(self);
 	if (destroy) {
 		if ((*d)) {
 			free(*d);
@@ -35,12 +36,12 @@ void basic_update_pos_pattern(Vec2 *v, Enemy *self, void **d, bool destroy)
 
 	if (!(*d)) {
 		(*d) = malloc(sizeof(bool));
-		(*(bool *)(*d)) = true;
+		(*(bool *)*d) = true;
 	}
 
 	if ((*(bool *)(*d))) {
 		if (v->y < 8) {
-			(*(bool *)(*d)) = false;
+			(*(bool *)*d) = false;
 		}
 		v->y -= 0.2f * Timer_GetDelta(g_time);
 	} else {

@@ -17,7 +17,7 @@ Enemy *Enemy_New(Scene *scene, int type, Vec2 position)
     self->position = position;
     self->type = type;
     self->state = ENEMY_FIRING;
-	self->lifePoints = 10;
+	self->lifePoints = 100;
 	self->lastAttack = -1;
 
 	self->update = &Enemy_Update_impl;

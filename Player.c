@@ -18,7 +18,7 @@ Player *Player_New(Scene *scene)
     self->radius = 0.25f;
 	self->texture = assets->player;
 	self->lastAttack = -1;
-	self->lifePoints = 10;
+	self->lifePoints = 100;
 
 	self->update = &Player_Update_impl;
 	self->updatePos = &Player_Update_pos_impl;
