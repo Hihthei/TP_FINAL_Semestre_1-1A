@@ -3,8 +3,10 @@
 #include "Math.h"
 #include "Enemy.h"
 #include "Bullet.h"
+#include "Scene.h"
 
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include <Math.h>
 
@@ -24,27 +26,30 @@
 
 void basic_update_pos_pattern(Vec2 *v, Enemy *self, void **d, bool destroy)
 {
+	UNUSED(self);
+
 	if (destroy) {
 		if ((*d)) {
 			free(*d);
 		}
 		return;
 	}
+
 	if (!(*d)) {
 		(*d) = malloc(sizeof(bool));
-		(*(bool *)(*d)) = true;
+		(*(bool *)d) = true;
 	}
 
-	if ((*(bool *)(*d))) {
-		if (v->y < 15) {
-			(*(bool *)(*d)) = false;
+	if ((*(bool *)*d) == true) {
+		if (v->y > 9) {
+			(*(bool *)*d) = false;
 		}
-		v->y -= 0.2;
+		v->y += 2.0f*Timer_GetDelta(g_time);
 	} else {
-		if (v->y > 1) {
-			(*(bool *)(*d)) = true;
+		if (v->y <= 1) {
+			(*(bool *)*d) = true;
 		}
-		v->y += 0.2;
+		v->y -= 2.0f*Timer_GetDelta(g_time);
 	}
 }
 
