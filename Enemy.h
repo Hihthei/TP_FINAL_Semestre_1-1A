@@ -38,6 +38,9 @@ typedef struct Enemy_s
     /// @brief Position de l'ennemi exprimée dans le référentiel monde.
     Vec2 position;
 
+    /// \Initial position
+    Vec2 position_initial;
+
     /// @brief Type de l'ennemi.
     /// Les valeurs possibles sont définies dans EnemyType.
     int type;
@@ -63,6 +66,8 @@ typedef struct Enemy_s
 
 	/// \brief Last time this entity thrown an attack.
 	float lastAttack;
+
+	
 
 	void (*update)(struct Enemy_s *self, void **data, bool destroy);
 	void (*updatePos)(Vec2 *v, struct Enemy_s *self, void **data, bool destroy);
