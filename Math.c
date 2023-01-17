@@ -30,7 +30,7 @@ Vec2 Vec2_Scale(Vec2 v, float s)
 
 float Vec2_Length(Vec2 v)
 {
-	return sqrt(v.x*v.x + v.y*v.y);
+	return (float)sqrtf(v.x*v.x + v.y*v.y);
 }
 
 Vec2 Vec2_Normalize(Vec2 v)

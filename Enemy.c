@@ -17,7 +17,7 @@ Enemy *Enemy_New(Scene *scene, int type, Vec2 position)
     self->position = position;
     self->type = type;
     self->state = ENEMY_FIRING;
-	self->lifePoints = 100;
+	self->lifePoints = 10;
 	self->lastAttack = -1;
 
 	self->update = &Enemy_Update_impl;
@@ -146,7 +146,7 @@ void Enemy_Render(Enemy *self)
 void Enemy_Damage(Enemy *self, int damage)
 {
 	self->lifePoints -= damage;
-	if (damage <= 0) {
+	if (self->lifePoints <= 0) {
 		self->state = ENEMY_DEAD;
 		// [TODO] Change to the right sprite.
 	}
