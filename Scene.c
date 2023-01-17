@@ -33,6 +33,10 @@ void Scene_Delete(Scene *self)
 		Bullet_Delete(self->bullets[i]);
 		self->bullets[i] = NULL;
 	}
+	for (int i = 0; i < self->uicCount; i++) {
+		ui_element_delete(self->elements[i]);
+		self->elements[i] = NULL;
+	}
 
 	Player_Delete(self->player);
 	Camera_Delete(self->camera);
@@ -172,6 +176,11 @@ bool Scene_Update(Scene *self)
 
     Scene_UpdateLevel(self);
 
+	//Met ? jour l'interface.
+	for (int i = 0; i < self->uicCount; i++) {
+		ui_element_render(self->elements[i], self);
+	}
+
     return self->input->quitPressed;
 }
 
@@ -199,6 +208,11 @@ void Scene_Render(Scene *self)
 
     // Affichage du joueur
     Player_Render(self->player);
+
+	//Affichage des ?l?ments d'interface.
+	for (int i = 0; i < self->uicCount; i++) {
+		ui_element_render(self->elements[i], self);
+	}
 }
 
 void Scene_AppendObject(void *object, void **objectArray, int *count, int capacity)
@@ -237,29 +251,55 @@ void Scene_AppendBullet(Scene *self, Bullet *bullet)
     );
 }
 
+void Scene_AddUiElement(Scene *self, UiElement *e)
+{
+	Scene_AppendObject(
+		e,
+		(void **)(self->elements),
+		&(self->uicCount),
+		UIC_CAPACITY
+	);
+}
+
 void Scene_RemoveObject(int index, void **objectArray, int *count)
 {
-    int lastIndex = *count - 1;
-    assert(0 <= index && index < *count);
+	int lastIndex = *count - 1;
+	assert(0 <= index && index < *count);
 
-    if (objectArray[index] == NULL)
-    {
-        assert(false);
-        abort();
-    }
+	if (objectArray[index] == NULL)
+	{
+		assert(false);
+		abort();
+	}
 
-    if (index == lastIndex)
-    {
-        // Supprime le pointeur
-        objectArray[index] = NULL;
-    }
-    else
-    {
-        // Remplace le pointeur par le dernier du tableau
-        objectArray[index] = objectArray[lastIndex];
-        objectArray[lastIndex] = NULL;
-    }
-    (*count)--;
+	if (index == lastIndex)
+	{
+		// Supprime le pointeur
+		objectArray[index] = NULL;
+	}
+	else
+	{
+		// Remplace le pointeur par le dernier du tableau
+		objectArray[index] = objectArray[lastIndex];
+		objectArray[lastIndex] = NULL;
+	}
+	(*count)--;
+}
+
+void Scene_RemoveUiElement(Scene *self, UiElement *e)
+{
+	int index = -1;
+	for (int i = 0; i < self->uicCount; i++) {
+		if (self->elements[i] == e) {
+			index = i;
+			break;
+		}
+	}
+	if (index < 0) {
+		return;
+	}
+
+	Scene_RemoveObject(index, (void **)(self->elements), &(self->uicCount));
 }
 
 void Scene_RemoveEnemy(Scene *self, int index)

@@ -18,7 +18,7 @@ Player *Player_New(Scene *scene)
     self->radius = 0.25f;
 	self->texture = assets->player;
 	self->lastAttack = -1;
-	self->lifePoints = 500;
+	self->lifePoints = 10;
 
 	self->update = &Player_Update_impl;
 	self->updatePos = &Player_Update_pos_impl;
@@ -115,7 +115,11 @@ void Player_Damage(Player *self, int damage, void *bullet)
 	UNUSED(bullet);
 
 	self->lifePoints -= damage;
+	if (self->lifePoints <= 20) {
+		self->state = PLAYER_DYING;
+	}
 	if (self->lifePoints <= 0) {
+		self->state = PLAYER_DEAD;
 		self->playerDead();
 	}
 }

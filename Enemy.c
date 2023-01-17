@@ -146,7 +146,7 @@ void Enemy_Render(Enemy *self)
 void Enemy_Damage(Enemy *self, int damage)
 {
 	self->lifePoints -= damage;
-	if (damage <= 0) {
+	if (self->lifePoints <= 0) {
 		self->state = ENEMY_DEAD;
 		// [TODO] Change to the right sprite.
 	}
