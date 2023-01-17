@@ -20,6 +20,7 @@ Player *Player_New(Scene *scene)
 	self->lastAttack = -1;
 	self->lifePoints = 100;
 
+
 	self->update = &Player_Update_impl;
 	self->updatePos = &Player_Update_pos_impl;
 	self->playerDead = &nofunc;
@@ -115,6 +116,9 @@ void Player_Damage(Player *self, int damage, void *bullet)
 	UNUSED(bullet);
 
 	self->lifePoints -= damage;
+	if (self->lifePoints <= 20) {
+		self->state = PLAYER_DYING;
+	}
 	if (self->lifePoints <= 0) {
 		self->state = PLAYER_DEAD;
 		self->playerDead();

@@ -60,6 +60,7 @@ int main(int argc, char *argv[])
     {
         // Met à jour le temps
         Timer_Update(g_time);
+		printf("%f FPS\n", 60/Timer_GetElapsed(g_time));
 
         // Met à jour la scène
         bool quitLoop = Scene_Update(scene);

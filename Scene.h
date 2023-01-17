@@ -9,12 +9,17 @@
 #include "Bullet.h"
 #include "Player.h"
 #include "Enemy.h"
+#include "uicomponents.h"
 
 // Nombre maximal d'ennemis actifs dans un niveau.
 #define ENEMY_CAPACITY 32
 
 // Nombre maximal de projectiles actifs dans un niveau.
 #define BULLET_CAPACITY 256
+
+#define UIC_CAPACITY 32
+
+struct UiElement_t;
 
 /// @brief Structure représentant la scène principale du jeu (niveau).
 typedef struct Scene_s
@@ -45,6 +50,9 @@ typedef struct Scene_s
 
     /// @brief Nombre de projectiles courrants.
     int bulletCount;
+
+	struct UiElement_t *elements[UIC_CAPACITY];
+	int uicCount;
 
     /// @brief Indice de la vague d'ennemis courrante.
     /// Utilisé pour implémenter un niveau complet.
@@ -89,6 +97,9 @@ void Scene_AppendEnemy(Scene *self, Enemy *enemy);
 /// @param self la scène.
 /// @param index l'indice du l'ennemi à supprimer dans le tableau self->enemies.
 void Scene_RemoveEnemy(Scene *self, int index);
+
+void Scene_AddUiElement(Scene *self, struct UiElement_t *e);
+void Scene_RemoveUiElement(Scene *self, struct UiElement_t *e);
 
 /// @brief Renvoie le moteur de rendu de la scène.
 /// @param self la scène.
