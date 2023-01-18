@@ -84,7 +84,6 @@ void Player_Update_impl(Player *self, PatternData *d)
 		if (self->lastAttack == -1 || self->lastAttack > 50) {
 			Vec2 velocity = Vec2_Set(4.0f, 0.0f);
 			Bullet *bullet = Bullet_New(self->scene, self->position, velocity, BULLET_PLAYER, 90.0f);
-			bullet->fromPlayer = true;
 			Scene_AppendBullet(self->scene, bullet);
 			self->lastAttack = 0;
 		} else {

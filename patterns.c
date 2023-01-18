@@ -11,7 +11,7 @@
 #include <Math.h>
 
 
-#define PATTERN_BULLET_MOVE_MAX 0
+#define PATTERN_BULLET_MOVE_MAX 2
 
 #define PATTERN_ENEMY_MOVE_MAX 1
 #define PATTERN_ENEMY_THROW_MAX 1
@@ -62,7 +62,6 @@ void basic_throw_pattern(Enemy *self, PatternData *d)
 		self->lastAttack = 0;
 		Vec2 velocity = Vec2_Set(-2.0f, 0.0f);
 		Bullet *bullet = Bullet_New(self->scene, self->position, velocity, BULLET_FIGHTER, 90.0f);
-		bullet->fromPlayer = false;
 		Scene_AppendBullet(self->scene, bullet);
 	} else {
 		self->lastAttack += Timer_GetDelta(g_time);
@@ -88,8 +87,23 @@ void bullet_auto_focus_pattern(struct Bullet_s *self, PatternData *d)
 	}
 }
 
-func_ptr pattern_library[5][1] = {
-	{(func_ptr)NULL},
+void bullet_random_pattern(struct Bullet_s *self, PatternData *d)
+{
+	if (d->destroy) {
+		return;
+	}
+
+	Vec2 direction = Vec2_Normalize(Vec2_Set(rand(), rand()));
+	self->position = Vec2_Scale(direction,
+								Vec2_Length(Vec2_Add(self->position,
+													 Vec2_Scale(self->velocity,
+																Timer_GetDelta(g_time))
+													 ))
+								);
+}
+
+func_ptr pattern_library[5][2] = {
+	{(func_ptr)&bullet_random_pattern, (func_ptr)&bullet_auto_focus_pattern},
 	{(func_ptr)&basic_update_pos_pattern},
 	{(func_ptr)&basic_throw_pattern},
 	{(func_ptr)NULL},

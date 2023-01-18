@@ -15,6 +15,8 @@ Scene *Scene_New(SDL_Renderer *renderer)
 	self->input = Input_New();
     self->waveIdx = 0;
 
+	memset(self->waves, 0, sizeof(void_scene_level_func_ptr)*WAVES_CAPACITY);
+
     return self;
 }
 
@@ -52,19 +54,15 @@ void Scene_Delete(Scene *self)
 
 void Scene_UpdateLevel(Scene *self)
 {
-    if (self->enemyCount > 0)
+	if (self->enemyCount > 0) {
         return;
+	}
 
-    if (self->waveIdx == 0)
-    {
-        Enemy *enemy = Enemy_New(self, ENEMY_FIGHTER, Vec2_Set(15.0f, 4.5f));
-
-		enemy->updatePos = get_pattern(PATTERN_ENEMY_MOVE, 0);
-		enemy->throwAttack = get_pattern(PATTERN_ENEMY_THROW, 0);
-
-        Scene_AppendEnemy(self, enemy);
-        self->waveIdx++;
-    }
+	//Loads the new level.
+	if (self->waves[self->waveIdx]) {
+		self->waves[self->waveIdx](self);
+		self->waveIdx++;
+	}
 }
 
 bool Scene_Update(Scene *self)
