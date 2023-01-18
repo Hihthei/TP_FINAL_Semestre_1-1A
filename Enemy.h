@@ -68,16 +68,21 @@ typedef struct Enemy_s
 	/// \brief Last time this entity thrown an attack.
 	float lastAttack;
 
+	/// \brief Used to know if we have to call enemyRaisedOrDead.
+	bool firstUpdate;
+
 	void_enemy_func_ptr update;
 	void_enemy_func_ptr updatePos;
 	void_enemy_func_ptr throwAttack;
-	PatternData _data[3]; //Holds additional data for the functions. Do not forget to update the memset size on change.
+	void_enemy_func_ptr enemyRaisedOrDead;
+	PatternData _data[4]; //Holds additional data for the functions. Do not forget to update the memset size on change.
 } Enemy;
 
 /// @brief Crée un nouvel ennemi.
 /// @param scene la scène.
 /// @param type le type de l'ennemi.
 /// @param position la position de départ de l'ennemi exprimée dans le référentiel monde.
+/// @param read function to call on instanciation and deletion.
 /// @return L'ennemi créé.
 Enemy *Enemy_New(Scene *scene, int type, Vec2 position);
 

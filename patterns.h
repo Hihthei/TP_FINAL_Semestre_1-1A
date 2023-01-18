@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Settings.h"
+
 #include <stdbool.h>
 
 struct Enemy_s;
@@ -30,6 +32,11 @@ typedef bool (*bool_enemy_func_ptr)(struct Enemy_s *s, PatternData *d);
 typedef void (*void_enemy_func_ptr)(struct Enemy_s *s, PatternData *d);
 typedef void (*void_player_func_ptr)(struct Player_s *s, PatternData *d);
 typedef void (*void_bullet_func_ptr)(struct Bullet_s *s, PatternData *d);
+
+static inline bool bool_enemy_func_none(struct Enemy_s *s, PatternData *d) { UNUSED(s); UNUSED(d); return false; }
+static inline void void_enemy_func_none(struct Enemy_s *s, PatternData *d) { UNUSED(s); UNUSED(d); }
+static inline void void_player_func_none(struct Player_s *s, PatternData *d) { UNUSED(s); UNUSED(d); }
+static inline void void_bullet_func_none(struct Bullet_s *s, PatternData *d) { UNUSED(s); UNUSED(d); }
 
 /// @brief Set to 'true' the field 'destroy' of all the given PatternData instances.
 /// @param d, array of PatternData of given size.

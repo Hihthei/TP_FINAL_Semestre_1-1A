@@ -21,9 +21,10 @@ Enemy *Enemy_New(Scene *scene, int type, Vec2 position)
 	self->update = &Enemy_Update_impl;
 	self->updatePos = &Enemy_Update_pos_impl;
 	self->throwAttack = &Enemy_Throw_Attack_impl;
+	self->enemyRaisedOrDead = &void_enemy_func_none;
 
-	memset(&self->_data[0], 0, sizeof(PatternData)*3);
-	set_patterns_scene(&self->_data[0], 3, scene);
+	memset(&self->_data[0], 0, sizeof(PatternData)*4);
+	set_patterns_scene(&self->_data[0], 4, scene);
 
     Assets *assets = Scene_GetAssets(self->scene);
     switch (type)
@@ -47,10 +48,11 @@ void Enemy_Delete(Enemy *self)
 {
     if (!self) return;
 
-	invalidate_patterns_data(&self->_data[0], 3);
+	invalidate_patterns_data(&self->_data[0], 4);
 	self->update(NULL, &self->_data[0]);
 	self->updatePos(NULL, &self->_data[1]);
 	self->throwAttack(NULL, &self->_data[2]);
+	self->enemyRaisedOrDead(NULL, &self->_data[3]);
 
     free(self);
 }
@@ -66,6 +68,10 @@ void Enemy_Update_impl(Enemy *self, PatternData *d)
 {
 	if (d->destroy) {
 		return;
+	}
+	if (self->firstUpdate) {
+		self->firstUpdate = false;
+		self->enemyRaisedOrDead(self, &self->_data[3]);
 	}
 
 	self->updatePos(self, &self->_data[1]);
