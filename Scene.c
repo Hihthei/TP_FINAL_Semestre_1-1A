@@ -10,12 +10,12 @@ Scene *Scene_New(SDL_Renderer *renderer)
 
 	self->renderer = renderer;
 
-	self->assets = Assets_New();
+    self->assets = Assets_New();
     self->camera = Camera_New(LOGICAL_WIDTH, LOGICAL_HEIGHT);
-	self->input = Input_New();
+    self->input = Input_New();
     self->waveIdx = 0;
-
-	memset(self->waves, 0, sizeof(void_scene_level_func_ptr)*WAVES_CAPACITY);
+    
+    memset(self->waves, 0, sizeof(void_scene_level_func_ptr)*WAVES_APACITY);
 
     return self;
 }
@@ -24,6 +24,7 @@ void Scene_Load(Scene *self)
 {
 	self->player = Player_New(self);
 }
+
 
 void Scene_Delete(Scene *self)
 {
@@ -54,26 +55,26 @@ void Scene_Delete(Scene *self)
 
 void Scene_UpdateLevel(Scene *self)
 {
-	if (self->enemyCount > 0) {
+    if (self->enemyCount > 0) {
         return;
-	}
+    }
 
-	//Loads the new level.
-	if (self->waves[self->waveIdx]) {
-		self->waves[self->waveIdx](self);
-		self->waveIdx++;
-	}
+    //Loads the new level.
+    if (self->waves[self->waveIdx]) {
+	self->waves[self->waveIdx](self);
+        self->waveIdx++;
+    }
 }
 
 bool Scene_Update(Scene *self)
 {
     Player *player = self->player;
 
-    // Met à jour les entrées utilisateur
+    // Met Ã  jour les entrÃ©es utilisateur
     Input_Update(self->input);
 
     // -------------------------------------------------------------------------
-    // Met à jour les tirs
+    // Met Ã  jour les tirs
 
     int i = 0;
     while (i < self->bulletCount)
@@ -106,7 +107,7 @@ bool Scene_Update(Scene *self)
                 float dist = Vec2_Distance(bullet->position, enemy->position);
                 if (dist < bullet->radius + enemy->radius)
                 {
-                    // Inflige des dommages à l'ennemi
+                    // Inflige des dommages Ã  l'ennemi
                     Enemy_Damage(enemy, 1);
 
                     // Supprime le tir
@@ -139,7 +140,7 @@ bool Scene_Update(Scene *self)
     }
 
     // -------------------------------------------------------------------------
-    // Met à jour les ennemis
+    // Met Ã  jour les ennemis
 
     i = 0;
     while (i < self->enemyCount)
@@ -170,12 +171,12 @@ bool Scene_Update(Scene *self)
     }
 
     // -------------------------------------------------------------------------
-    // Met à jour le joueur
+    // Met Ã  jour le joueur
 
     Player_Update(self->player);
 
     // -------------------------------------------------------------------------
-    // Met à jour le niveau
+    // Met Ã  jour le niveau
 
     Scene_UpdateLevel(self);
 
@@ -315,4 +316,9 @@ void Scene_RemoveBullet(Scene *self, int index)
 {
     Bullet_Delete(self->bullets[index]);
     Scene_RemoveObject(index, (void **)(self->bullets), &(self->bulletCount));
+}
+
+void Scene_Update_Music(/* quelque chose */)
+{
+
 }

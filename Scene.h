@@ -118,6 +118,12 @@ void Scene_RemoveEnemy(Scene *self, int index);
 void Scene_AddUiElement(Scene *self, struct UiElement_t *e);
 void Scene_RemoveUiElement(Scene *self, struct UiElement_t *e);
 
+
+/// @brief mise à jour de l'audio
+/// @param quekk'chose
+/// @return la scène
+void Scene_Update_Music(/* quelque chose */);
+
 /// @brief Renvoie le moteur de rendu de la scène.
 /// @param self la scène.
 /// @return Le moteur de rendu de la scène.
@@ -149,3 +155,5 @@ INLINE Input *Scene_GetInput(Scene *self)
 {
     return self->input;
 }
+
+
