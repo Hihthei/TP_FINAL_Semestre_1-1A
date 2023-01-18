@@ -43,21 +43,3 @@ float Vec2_Distance(Vec2 v1, Vec2 v2)
 {
 	return Vec2_Length(Vec2_Sub(v1, v2));
 }
-
-float Vec2_Scalar(Vec2 v1, Vec2 v2)
-{
-	return (v1.x*v2.x + v1.y*v2.y);
-}
-
-Vec2 Vec2_Rotate(Vec2 v, float a)
-{
-	return Vec2_Set(v.x*cos(a) - v.y*sin(a),
-					v.x*sin(a) + v.y*cos(a));
-}
-
-float Vec2_AngleBetween(Vec2 v1, Vec2 v2)
-{
-	return acosf(
-				Vec2_Scalar(v1, v2) / (Vec2_Length(v1)*Vec2_Length(v2))
-				);
-}

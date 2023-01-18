@@ -69,6 +69,11 @@ int main(int argc, char *argv[])
 	((LifeBar *)lb)->base.position = Vec2_Set(1, 1);
 	Scene_AddUiElement(scene, (UiElement *)lb);
 
+    //--------------------------------------------------------------------------
+    //lancement de la musique
+
+
+
     while (true)
     {
         // Met à jour le temps

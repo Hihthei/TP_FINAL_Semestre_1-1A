@@ -10,19 +10,13 @@ Scene *Scene_New(SDL_Renderer *renderer)
 
 	self->renderer = renderer;
 
-	self->assets = Assets_New();
+    self->assets = Assets_New(renderer);
     self->camera = Camera_New(LOGICAL_WIDTH, LOGICAL_HEIGHT);
-	self->input = Input_New();
+    self->input = Input_New();
+    self->player = Player_New(self);
     self->waveIdx = 0;
 
-	memset(self->waves, 0, sizeof(void_scene_level_func_ptr)*WAVES_CAPACITY);
-
     return self;
-}
-
-void Scene_Load(Scene *self)
-{
-	self->player = Player_New(self);
 }
 
 void Scene_Delete(Scene *self)
@@ -54,15 +48,19 @@ void Scene_Delete(Scene *self)
 
 void Scene_UpdateLevel(Scene *self)
 {
-	if (self->enemyCount > 0) {
+    if (self->enemyCount > 0)
         return;
-	}
 
-	//Loads the new level.
-	if (self->waves[self->waveIdx]) {
-		self->waves[self->waveIdx](self);
-		self->waveIdx++;
-	}
+    if (self->waveIdx == 0)
+    {
+        Enemy *enemy = Enemy_New(self, ENEMY_FIGHTER, Vec2_Set(15.0f, 4.5f));
+
+		enemy->updatePos = get_pattern(PATTERN_ENEMY_MOVE, 0);
+		enemy->throwAttack = get_pattern(PATTERN_ENEMY_THROW, 0);
+
+        Scene_AppendEnemy(self, enemy);
+        self->waveIdx++;
+    }
 }
 
 bool Scene_Update(Scene *self)
@@ -315,4 +313,9 @@ void Scene_RemoveBullet(Scene *self, int index)
 {
     Bullet_Delete(self->bullets[index]);
     Scene_RemoveObject(index, (void **)(self->bullets), &(self->bulletCount));
+}
+
+void Scene_Update_Music(/* quelque chose */)
+{
+
 }
