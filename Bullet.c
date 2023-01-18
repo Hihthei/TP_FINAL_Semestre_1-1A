@@ -98,12 +98,12 @@ void Bullet_Render(Bullet *self)
 	float scale = Camera_GetWorldToViewScale(camera);
 	SDL_FRect dst = { 0 };
 	// Changez 48 par une autre valeur pour grossir ou réduire l'objet
-	dst.h = 48 * PIX_TO_WORLD * scale;
-	dst.w = 48 * PIX_TO_WORLD * scale;
+	dst.h = 15 * PIX_TO_WORLD * scale;
+	dst.w = 15 * PIX_TO_WORLD * scale;
 	Camera_WorldToView(camera, self->position, &dst.x, &dst.y);
 	// Le point de référence est le centre de l'objet
 	dst.x -= 0.50f * dst.w;
 	dst.y -= 0.50f * dst.h;
 	// On affiche en position dst (unités en pixels)
-	SDL_RenderCopyExF(renderer, self->texture, NULL, &dst, 90.0f, NULL, 0);
+	SDL_RenderCopyExF(renderer, self->texture, NULL, &dst, self->angle, NULL, 0);
 }

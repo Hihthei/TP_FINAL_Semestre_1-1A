@@ -19,6 +19,10 @@ void ui_element_render(UiElement *e, Scene *s)
 		return;
 	}
 
+	int b;
+	int *a = &b;
+	*a = 0;
+
 	e->render(e, s);
 }
 

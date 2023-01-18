@@ -65,8 +65,23 @@ float Vec2_Scalar(Vec2 v1, Vec2 v2);
 /// @brief Bet angle between 2 vectors
 float Vec2_AngleBetween(Vec2 v1, Vec2 v2);
 
+/// @brief Get the angle between a vector and the X axis.
+float Vec2_AngleBetweenX(Vec2 v);
+
+/// @brief Get the angle between a vector and the Y axis.
+float Vec2_AngleBetweenY(Vec2 v);
+
+/// @brief Get the angle between a vector and the -X axis.
+float Vec2_AngleBetweenXInvert(Vec2 v);
+
+/// @brief Get the angle between a vector and the -Y axis.
+float Vec2_AngleBetweenYInvert(Vec2 v);
+
 /// @brief Rotate counter-clockwise of a given angle a vector.
 Vec2 Vec2_Rotate(Vec2 v, float angle);
+
+/// @brief convert radian value to degree value.
+float angle_radian_to_degrees(float a);
 
 /// @brief Structure représentant une boîte englobante alignée sur les axes
 /// (AABB : Aligned Axis Bounding Box)

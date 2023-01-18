@@ -19,6 +19,12 @@ typedef struct LifeBar_t
 	int lifePoints;
 } LifeBar;
 
+struct LifeBarY
+{
+	LifeBar base;
+	int k;
+};
+
 typedef struct Overlay_t
 {
 	UiElement base;

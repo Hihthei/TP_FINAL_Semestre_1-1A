@@ -61,3 +61,44 @@ float Vec2_AngleBetween(Vec2 v1, Vec2 v2)
 				Vec2_Scalar(v1, v2) / (Vec2_Length(v1)*Vec2_Length(v2))
 				);
 }
+
+float Vec2_AngleBetweenX(Vec2 v)
+{
+	float a = Vec2_AngleBetween(v, Vec2_Right);
+	if (v.y > 0) {
+		a = -a;
+	}
+	return a;
+}
+
+float Vec2_AngleBetweenY(Vec2 v)
+{
+	float a = Vec2_AngleBetween(v, Vec2_Up);
+	if (v.x > 0) {
+		a = -a;
+	}
+	return a;
+}
+
+float Vec2_AngleBetweenXInvert(Vec2 v)
+{
+	float a = Vec2_AngleBetween(v, Vec2_Left);
+	if (v.y < 0) {
+		a = -a;
+	}
+	return a;
+}
+
+float Vec2_AngleBetweenYInvert(Vec2 v)
+{
+	float a = Vec2_AngleBetween(v, Vec2_Down);
+	if (v.x < 0) {
+		a = -a;
+	}
+	return a;
+}
+
+float angle_radian_to_degrees(float a)
+{
+	return (a*180)/(2*M_PI);
+}
