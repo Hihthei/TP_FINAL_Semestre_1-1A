@@ -10,13 +10,17 @@ Scene *Scene_New(SDL_Renderer *renderer)
 
 	self->renderer = renderer;
 
-    self->assets = Assets_New(renderer);
+	self->assets = Assets_New();
     self->camera = Camera_New(LOGICAL_WIDTH, LOGICAL_HEIGHT);
-    self->input = Input_New();
-    self->player = Player_New(self);
+	self->input = Input_New();
     self->waveIdx = 0;
 
     return self;
+}
+
+void Scene_Load(Scene *self)
+{
+	self->player = Player_New(self);
 }
 
 void Scene_Delete(Scene *self)

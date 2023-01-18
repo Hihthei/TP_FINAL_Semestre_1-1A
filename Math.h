@@ -59,6 +59,15 @@ Vec2 Vec2_Normalize(Vec2 v);
 /// @return La distance séparant les deux points.
 float Vec2_Distance(Vec2 v1, Vec2 v2);
 
+/// @brief gget the scalar product of two vectors.
+float Vec2_Scalar(Vec2 v1, Vec2 v2);
+
+/// @brief Bet angle between 2 vectors
+float Vec2_AngleBetween(Vec2 v1, Vec2 v2);
+
+/// @brief Rotate counter-clockwise of a given angle a vector.
+Vec2 Vec2_Rotate(Vec2 v, float angle);
+
 /// @brief Structure représentant une boîte englobante alignée sur les axes
 /// (AABB : Aligned Axis Bounding Box)
 typedef struct AABB_s {

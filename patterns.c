@@ -69,6 +69,25 @@ void basic_throw_pattern(Enemy *self, PatternData *d)
 	}
 }
 
+void bullet_auto_focus_pattern(struct Bullet_s *self, PatternData *d)
+{
+	if (d->destroy) {
+		return;
+	}
+
+	if (self->position.x < d->scene->player->position.x) {
+		self->position = Vec2_Add(self->position, Vec2_Scale(self->velocity, Timer_GetDelta(g_time)));
+	} else {
+		Vec2 direction = Vec2_Normalize(Vec2_Sub(self->position, d->scene->player->position));
+		self->position = Vec2_Scale(direction,
+									Vec2_Length(Vec2_Add(self->position,
+														 Vec2_Scale(self->velocity,
+																	Timer_GetDelta(g_time))
+														 ))
+									);
+	}
+}
+
 func_ptr pattern_library[5][1] = {
 	{(func_ptr)NULL},
 	{(func_ptr)&basic_update_pos_pattern},

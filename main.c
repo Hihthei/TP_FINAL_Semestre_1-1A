@@ -56,7 +56,9 @@ int main(int argc, char *argv[])
     //--------------------------------------------------------------------------
     // Boucle de rendu
 
-    Scene *scene = Scene_New(renderer);
+	Scene *scene = Scene_New(renderer);
+	Assets_Load(scene->assets, scene->renderer);
+	Scene_Load(scene);
 
 	UiElement *lb = ui_element_LifeBar_new();
 	((LifeBar *)lb)->base.size = Vec2_Set(1.4f, 0.3f);
