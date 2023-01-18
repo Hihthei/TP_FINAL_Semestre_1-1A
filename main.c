@@ -5,7 +5,6 @@
 #include "Scene.h"
 #include "uicomponents.h"
 #include "Math.h"
-#include "levels.h"
 
 int main(int argc, char *argv[])
 {
@@ -57,17 +56,14 @@ int main(int argc, char *argv[])
     //--------------------------------------------------------------------------
     // Boucle de rendu
 
-	Scene *scene = Scene_New(renderer);
-	//Loads assets with the attached scene.
-	Assets_Load(scene->assets, scene->renderer);
-	//Add the levels to the scene.
-	scene->waves[0] = &craft_level_1;
-	Scene_Load(scene);
+    Scene *scene = Scene_New(renderer);
 
 	UiElement *lb = ui_element_LifeBar_new();
 	((LifeBar *)lb)->base.size = Vec2_Set(1.4f, 0.3f);
 	((LifeBar *)lb)->base.position = Vec2_Set(1, 1);
 	Scene_AddUiElement(scene, (UiElement *)lb);
+
+    //ajout du son principal du jeu
 
     while (true)
     {
