@@ -48,26 +48,21 @@ void Player_Update_pos_impl(Player *self, PatternData *d)
 		return;
 	}
 
-
 	// On récupère des infos essentielles (communes à tout objet)
 	Scene *scene = self->scene;
-
-	Input* input = Scene_GetInput(scene);
+	Input *input = Scene_GetInput(scene);
 	// Mise à jour de la vitesse en fonction de l'état des touches
 	Vec2 velocity = Vec2_Scale(Vec2_Set(input->hAxis, input->vAxis), 2);
 	// Mise à jour de la position
 	self->position = Vec2_Add(self->position, Vec2_Scale(velocity, Timer_GetDelta(g_time)));
-
-	if (self->position.x < 0 + self->radius) {
-		self->position.x = 0 + self->radius;
-	}
-	else if (self->position.x > 16 - self->radius) {
+	if (self->position.x < 0) {
+		self->position.x = self->radius;
+	} else if (self->position.x > 16) {
 		self->position.x = 16 - self->radius;
 	}
-	if (self->position.y < 0 + self->radius) {
-		self->position.y = 0 + self->radius;
-	}
-	else if (self->position.y > 9 - self->radius) {
+	if (self->position.y < 0) {
+		self->position.y = self->radius;
+	} else if (self->position.y > 9) {
 		self->position.y = 9 - self->radius;
 	}
 }

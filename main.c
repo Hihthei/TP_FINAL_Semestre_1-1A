@@ -62,33 +62,130 @@ int main(int argc, char *argv[])
 	Assets_Load(scene->assets, scene->renderer);
 	//Add the levels to the scene.
 	scene->waves[0] = &craft_level_1;
-	Scene_Load(scene);
+	scene->waves[1] = &craft_level_1_boss;
+	scene->waves[2] = &craft_level_2;
+	scene->waves[3] = &craft_level_2_boss;
+	scene->waves[4] = &craft_level_3;
+	scene->waves[5] = &craft_level_4;
+	scene->waves[6] = &craft_level_4_5;
+	scene->waves[7] = &craft_level_4_boss;
 
-	UiElement *lb = ui_element_LifeBar_new();
-	((LifeBar *)lb)->base.size = Vec2_Set(1.4f, 0.1f);
-	Scene_AddUiElement(scene, (UiElement *)lb);
+	bool no_quit = true;
+	//Show the menu.
 
-    while (true)
-    {
-        // Met à jour le temps
-        Timer_Update(g_time);
+	UiElement *button = ui_element_Button_new();
+	button->size = Vec2_Set(4, 3);
+	//((Button *)button)->image = scene.;
+
+	scene->ui_mode = true;
+	while (true)
+	{
+		// Met à jour le temps
+		Timer_Update(g_time);
 		//printf("%f FPS\n", 60/Timer_GetElapsed(g_time));
 
-        // Met à jour la scène
-        bool quitLoop = Scene_Update(scene);
-        if (quitLoop)
-            break;
+		// Met à jour la scène
+		bool quitLoop = Scene_Update(scene);
+		if (quitLoop) {
+			no_quit = false;
+			break;
+		}
+		if (((Button *)button)->clicked) {
+			break;
+		}
 
-        // Efface le rendu précédent
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-        SDL_RenderClear(renderer);
+		// Efface le rendu précédent
+		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+		SDL_RenderClear(renderer);
 
-        // Dessine la scène
-        Scene_Render(scene);
+		// Dessine la scène
+		Scene_Render(scene);
 
-        // Affiche le nouveau rendu
-        SDL_RenderPresent(renderer);
-    }
+		// Affiche le nouveau rendu
+		SDL_RenderPresent(renderer);
+	}
+
+load_game:
+
+	scene->ui_mode = false;
+	Scene_RemoveUiElement(scene, button);
+	Scene_Load(scene);
+
+	//Show the game if required.
+	if (no_quit) {
+		UiElement *lb = ui_element_LifeBar_new();
+		((LifeBar *)lb)->base.size = Vec2_Set(1.4f, 0.1f);
+		Scene_AddUiElement(scene, (UiElement *)lb);
+
+		while (true)
+		{
+			// Met à jour le temps
+			Timer_Update(g_time);
+			//printf("%f FPS\n", 60/Timer_GetElapsed(g_time));
+
+			// Met à jour la scène
+			bool quitLoop = Scene_Update(scene);
+			if (quitLoop)
+				break;
+
+			// Efface le rendu précédent
+			SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+			SDL_RenderClear(renderer);
+
+			// Dessine la scène
+			Scene_Render(scene);
+
+			// Affiche le nouveau rendu
+			SDL_RenderPresent(renderer);
+		}
+
+		//Clean the scene.
+		Scene_Unload(scene);
+		scene->ui_mode = true;
+
+		//Display new data.
+		button = ui_element_Button_new();
+		button->size = Vec2_Set(4, 3);
+		button->size = Vec2_Set(4, 3);
+
+		//Change the texture.
+		no_quit = true;
+		if (scene->player->state == PLAYER_DEAD) {
+			//((Button *)button)->image = scene.;
+		} else {
+			//((Button *)button)->image = scene.;
+		}
+
+		while (true)
+		{
+			// Met à jour le temps
+			Timer_Update(g_time);
+			//printf("%f FPS\n", 60/Timer_GetElapsed(g_time));
+
+			// Met à jour la scène
+			bool quitLoop = Scene_Update(scene);
+			if (quitLoop) {
+				no_quit = false;
+				break;
+			}
+			if (((Button *)button)->clicked) {
+				break;
+			}
+
+			// Efface le rendu précédent
+			SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+			SDL_RenderClear(renderer);
+
+			// Dessine la scène
+			Scene_Render(scene);
+
+			// Affiche le nouveau rendu
+			SDL_RenderPresent(renderer);
+		}
+		if (no_quit) {
+			goto load_game;
+		}
+	}
 
     //--------------------------------------------------------------------------
     // Libération de la mémoire

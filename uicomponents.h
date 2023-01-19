@@ -29,6 +29,7 @@ typedef struct Button_t
 {
 	UiElement base;
 	SDL_Texture *image;
+	bool clicked;
 } Button;
 
 UiElement *ui_element_LifeBar_new();

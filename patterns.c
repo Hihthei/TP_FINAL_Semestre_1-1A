@@ -92,8 +92,8 @@ void enemy_circle_pos_pattern(Enemy *self, PatternData *d)
 		as->source = Vec2_Add(self->position, Vec2_Set(-2, 0));
 	}
 
-	as->sourceTime += Timer_GetElapsed(g_time);
-	self->position = Vec2_Add(as->source, Vec2_Set(cos(as->sourceTime)*2, sin(as->sourceTime)*2));
+	as->sourceTime += Timer_GetDelta(g_time);
+	self->position = Vec2_Add(as->source, Vec2_Set(cos(as->sourceTime)*1.5, sin(as->sourceTime)*1.5));
 }
 
 void enemy_kamikaze_pos_pattern(Enemy *self, PatternData *d)
@@ -413,9 +413,19 @@ void enemy_auto_aim_pattern(Enemy *self, PatternData *d)
 }
 
 func_ptr pattern_library[5][6] = {
-	{(func_ptr)&bullet_random_pattern, (func_ptr)&bullet_auto_focus_pattern, (func_ptr)&bullet_slow_pattern, (func_ptr)&bullet_spiral_pattern},
-	{(func_ptr)&enemy_update_pos_pattern, (func_ptr)&enemy_circle_pos_pattern, (func_ptr)&enemy_kamikaze_pos_pattern},
-	{(func_ptr)&enemy_throw_pattern,
+	/*PATTERN_BULLET_MOVE*/{
+		(func_ptr)&bullet_random_pattern,
+		(func_ptr)&bullet_auto_focus_pattern,
+		(func_ptr)&bullet_slow_pattern,
+		(func_ptr)&bullet_spiral_pattern
+	},
+	/*PATTERN_ENEMY_MOVE*/ {
+		(func_ptr)&enemy_update_pos_pattern,
+		(func_ptr)&enemy_circle_pos_pattern,
+		(func_ptr)&enemy_kamikaze_pos_pattern
+	},
+	/*PATTERN_ENEMY_THROW*/{
+		(func_ptr)&enemy_throw_pattern,
 		(func_ptr)&enemy_throw_two_pattern,
 		(func_ptr)&enemy_throw_mid_three_pattern,
 		(func_ptr)&enemy_throw_three_pattern,

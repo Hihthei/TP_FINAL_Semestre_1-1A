@@ -25,6 +25,26 @@ void Scene_Load(Scene *self)
 	self->player = Player_New(self);
 }
 
+void Scene_Unload(Scene *self)
+{
+	for (int i = 0; i < self->enemyCount; i++)
+	{
+		Enemy_Delete(self->enemies[i]);
+		self->enemies[i] = NULL;
+	}
+	self->enemyCount = 0;
+	for (int i = 0; i < self->bulletCount; i++)
+	{
+		Bullet_Delete(self->bullets[i]);
+		self->bullets[i] = NULL;
+	}
+	self->bulletCount = 0;
+	if (self->player) {
+		Player_Delete(self->player);
+	}
+	self->player = NULL;
+}
+
 void Scene_Delete(Scene *self)
 {
     if (!self) return;
@@ -44,7 +64,9 @@ void Scene_Delete(Scene *self)
 		self->elements[i] = NULL;
 	}
 
-	Player_Delete(self->player);
+	if (self->player) {
+		Player_Delete(self->player);
+	}
 	Camera_Delete(self->camera);
 	Input_Delete(self->input);
 	Assets_Delete(self->assets);
@@ -75,109 +97,111 @@ bool Scene_Update(Scene *self)
     // -------------------------------------------------------------------------
     // Met à jour les tirs
 
-    int i = 0;
-    while (i < self->bulletCount)
-    {
-        Bullet *bullet = self->bullets[i];
-		bool removed = false;
+	if (!self->ui_mode) {
+		int i = 0;
+		while (i < self->bulletCount)
+		{
+			Bullet *bullet = self->bullets[i];
+			bool removed = false;
 
-        Bullet_Update(bullet);
+			Bullet_Update(bullet);
 
-        bool outOfBounds =
-            (bullet->position.x < -1.0f) ||
-            (bullet->position.x > 17.0f) ||
-            (bullet->position.y < -1.0f) ||
-            (bullet->position.y > 10.0f);
+			bool outOfBounds =
+				(bullet->position.x < -1.0f) ||
+				(bullet->position.x > 17.0f) ||
+				(bullet->position.y < -1.0f) ||
+				(bullet->position.y > 10.0f);
 
-        if (outOfBounds)
-        {
-            // Supprime le tir
-            Scene_RemoveBullet(self, i);
-			//removed = true;
-            continue;
-        }
-
-        if (bullet->fromPlayer)
-        {
-            // Teste les collisions avec les ennemis
-            for (int j = 0; j < self->enemyCount; j++)
-            {
-                Enemy *enemy = self->enemies[j];
-                float dist = Vec2_Distance(bullet->position, enemy->position);
-                if (dist < bullet->radius + enemy->radius)
-                {
-                    // Inflige des dommages à l'ennemi
-                    Enemy_Damage(enemy, 1);
-
-                    // Supprime le tir
-                    Scene_RemoveBullet(self, i);
-					removed = true;
-                    break;
-                }
-            }
-        }
-        else
-        {
-            // Teste la collision avec le joueur
-            float dist = Vec2_Distance(bullet->position, self->player->position);
-            if (dist < bullet->radius + player->radius)
-            {
-                // Inflige des dommages au joueur
-				Player_Damage(player, 1, (void *)bullet);
-
+			if (outOfBounds)
+			{
 				// Supprime le tir
-                Scene_RemoveBullet(self, i);
+				Scene_RemoveBullet(self, i);
+				//removed = true;
+				continue;
+			}
+
+			if (bullet->fromPlayer)
+			{
+				// Teste les collisions avec les ennemis
+				for (int j = 0; j < self->enemyCount; j++)
+				{
+					Enemy *enemy = self->enemies[j];
+					float dist = Vec2_Distance(bullet->position, enemy->position);
+					if (dist < bullet->radius + enemy->radius)
+					{
+						// Inflige des dommages à l'ennemi
+						Enemy_Damage(enemy, 1);
+
+						// Supprime le tir
+						Scene_RemoveBullet(self, i);
+						removed = true;
+						break;
+					}
+				}
+			}
+			else
+			{
+				// Teste la collision avec le joueur
+				float dist = Vec2_Distance(bullet->position, self->player->position);
+				if (dist < bullet->radius + player->radius)
+				{
+					// Inflige des dommages au joueur
+					Player_Damage(player, 1, (void *)bullet);
+
+					// Supprime le tir
+					Scene_RemoveBullet(self, i);
+					removed = true;
+				}
+			}
+
+			// Passe au prochain tir
+			if (removed == false)
+			{
+				i++;
+			}
+		}
+
+		// -------------------------------------------------------------------------
+		// Met à jour les ennemis
+
+		i = 0;
+		while (i < self->enemyCount)
+		{
+			Enemy *enemy = self->enemies[i];
+			bool removed = false;
+
+			Enemy_Update(enemy);
+
+			if (enemy->state == ENEMY_DEAD)
+			{
+				// Supprime l'ennemi
+				Scene_RemoveEnemy(self, i);
 				removed = true;
-            }
-        }
+			}
 
-        // Passe au prochain tir
-		if (removed == false)
-        {
-            i++;
-		}
-    }
+			//Look for a colision.
+			if (Vec2_Distance(player->position, enemy->position) <= (enemy->radius + player->radius)) {
+				//Trigger the collision.
+				Player_Ship_Collision(player, enemy);
+			}
 
-    // -------------------------------------------------------------------------
-    // Met à jour les ennemis
-
-    i = 0;
-    while (i < self->enemyCount)
-    {
-        Enemy *enemy = self->enemies[i];
-        bool removed = false;
-
-        Enemy_Update(enemy);
-
-        if (enemy->state == ENEMY_DEAD)
-        {
-            // Supprime l'ennemi
-            Scene_RemoveEnemy(self, i);
-            removed = true;
-        }
-
-		//Look for a colision.
-		if (Vec2_Distance(player->position, enemy->position) <= (enemy->radius + player->radius)) {
-			//Trigger the collision.
-			Player_Ship_Collision(player, enemy);
+			// Passe au prochain ennemi
+			if (removed == false)
+			{
+				i++;
+			}
 		}
 
-        // Passe au prochain ennemi
-        if (removed == false)
-        {
-            i++;
-        }
-    }
+		// -------------------------------------------------------------------------
+		// Met à jour le joueur
 
-    // -------------------------------------------------------------------------
-    // Met à jour le joueur
+		Player_Update(self->player);
 
-    Player_Update(self->player);
+		// -------------------------------------------------------------------------
+		// Met à jour le niveau
 
-    // -------------------------------------------------------------------------
-    // Met à jour le niveau
-
-    Scene_UpdateLevel(self);
+		Scene_UpdateLevel(self);
+	}
 
 	//Met ? jour l'interface.
 	for (int i = 0; i < self->uicCount; i++) {
@@ -195,22 +219,24 @@ void Scene_Render(Scene *self)
     SDL_RenderCopy(renderer, assets->layers[0], NULL, NULL);
     SDL_RenderCopy(renderer, assets->layers[1], NULL, NULL);
 
-    // Affichage des bullets
-    int bulletCount = self->bulletCount;
-    for (int i = 0; i < bulletCount; i++)
-    {
-        Bullet_Render(self->bullets[i]);
-    }
+	if (!self->ui_mode) {
+		// Affichage des bullets
+		int bulletCount = self->bulletCount;
+		for (int i = 0; i < bulletCount; i++)
+		{
+			Bullet_Render(self->bullets[i]);
+		}
 
-    // Affichage des ennemis
-    int enemyCount = self->enemyCount;
-    for (int i = 0; i < enemyCount; i++)
-    {
-        Enemy_Render(self->enemies[i]);
-    }
+		// Affichage des ennemis
+		int enemyCount = self->enemyCount;
+		for (int i = 0; i < enemyCount; i++)
+		{
+			Enemy_Render(self->enemies[i]);
+		}
 
-    // Affichage du joueur
-    Player_Render(self->player);
+		// Affichage du joueur
+		Player_Render(self->player);
+	}
 
 	//Affichage des ?l?ments d'interface.
 	for (int i = 0; i < self->uicCount; i++) {

@@ -70,6 +70,8 @@ typedef struct Scene_s
 
 	/// @brief Functions handling generation of the different levels.
 	void_scene_level_func_ptr waves[WAVES_CAPACITY];
+
+	bool ui_mode;
 } Scene;
 
 /// @brief Crée la scène principale du jeu.
@@ -80,6 +82,9 @@ Scene *Scene_New(SDL_Renderer *renderer);
 /// \brief Triggers loading of required resources.
 /// \param self la sc?ne.
 void Scene_Load(Scene *self);
+
+/// @brief Unload data that is unecessary for a full UI mode (no player or enemies...).
+void Scene_Unload(Scene *self);
 
 /// @brief Détruit la scène principale.
 /// @param self la scène.

@@ -58,6 +58,11 @@ void ui_Overlay_update(Overlay *b, Scene *s)
 void ui_Button_update(Button *self, Scene *scene)
 {
 	Input *input = Scene_GetInput(scene);
+	if (input->shootPressed) {
+		self->clicked = true;
+	} else {
+		self->clicked = false;
+	}
 }
 
 void ui_LifeBar_render(LifeBar *self, Scene *scene)
