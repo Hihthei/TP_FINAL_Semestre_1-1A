@@ -57,14 +57,12 @@ void Player_Update_pos_impl(Player *self, PatternData *d)
 
 	if (self->position.x < self->radius) {
 		self->position.x = self->radius;
-	}
-	else if (self->position.x > 16 - self->radius) {
+	} else if (self->position.x > 16 - self->radius) {
 		self->position.x = 16 - self->radius;
 	}
 	if (self->position.y < self->radius) {
 		self->position.y = self->radius;
-	}
-	else if (self->position.y > 9 - self->radius) {
+	} else if (self->position.y > 9 - self->radius) {
 		self->position.y = 9 - self->radius;
 	}
 }
@@ -92,11 +90,11 @@ void Player_Update_impl(Player *self, PatternData *d)
 		}
 	}
 	if (input->specialPressed) {
-		if (self->lastAttack == -1 || self->lastAttack > 3) {
-			Bullet *bullet = Bullet_New(self->scene, self->position, Vec2_Set(4.0f, 0.0f), BULLET_PLAYER, 90.0f, 1);
+		if (self->lastSpecialAttack == -1 || self->lastSpecialAttack > 3) {
+			Bullet *bullet = Bullet_New(self->scene, self->position, Vec2_Set(6.0f, 0.0f), BULLET_PLAYER, 90.0f, 3);
 			bullet->updatePos = &bullet_enemy_auto_focus_pattern;
 			Scene_AppendBullet(self->scene, bullet);
-			mixer_play_music(self->scene->mixer, PlayerShotSound, 1);
+			mixer_play_music(self->scene->mixer, PlayerSpecialShotSound, 1);
 			self->lastSpecialAttack = 0;
 		}
 	}
