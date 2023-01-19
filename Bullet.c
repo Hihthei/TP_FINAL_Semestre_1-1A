@@ -17,6 +17,7 @@ Bullet *Bullet_New(Scene *scene, Vec2 position, Vec2 velocity, int type, float a
     self->angle = angle;
     self->scene = scene;
 	self->fromPlayer = false;
+	self->damages = damages;
 
 	self->update = &Bullet_Update_impl;
 	self->updatePos = &Bullet_Update_pos_impl;
