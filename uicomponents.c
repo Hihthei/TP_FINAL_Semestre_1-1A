@@ -19,6 +19,10 @@ void ui_element_render(UiElement *e, Scene *s)
 		return;
 	}
 
+	int b;
+	int *a = &b;
+	*a = 0;
+
 	e->render(e, s);
 }
 
@@ -50,6 +54,11 @@ void ui_Overlay_update(Overlay *b, Scene *s)
 {
 	UNUSED(b);
 	UNUSED(s);
+}
+
+void ui_Button_update(Button *self, Scene *scene)
+{
+	Input *input = Scene_GetInput(scene);
 }
 
 void ui_LifeBar_render(LifeBar *self, Scene *scene)
@@ -110,6 +119,10 @@ void ui_Overlay_render(Overlay *self, Scene *scene)
 	SDL_RenderDrawRect(renderer, &rect);
 }
 
+void ui_Button_render(Button *self, Scene *scene)
+{
+}
+
 void ui_LifeBar_destroy(LifeBar *b)
 {
 	UNUSED(b);
@@ -118,6 +131,11 @@ void ui_LifeBar_destroy(LifeBar *b)
 void ui_Overlay_destroy(Overlay *o)
 {
 	UNUSED(o);
+}
+
+void ui_Button_destroy(Button *btn)
+{
+	UNUSED(btn);
 }
 
 UiElement *ui_element_Overlay_new()
@@ -149,4 +167,11 @@ UiElement *ui_element_LifeBar_new()
 	b->base.update = (void (*)(UiElement *, Scene *)) &ui_LifeBar_update;
 
 	return (UiElement *)b;
+}
+
+UiElement *ui_element_Button_New()
+{
+	Button *btn = (Button *)malloc(sizeof(Button));
+	memset(btn, 0, sizeof(Button));
+	ui_element_init((UiElement *)btn);
 }
