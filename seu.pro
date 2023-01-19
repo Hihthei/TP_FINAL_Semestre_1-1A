@@ -16,6 +16,7 @@ SOURCES += \
         Player.c \
         Scene.c \
         Timer.c \
+        levels.c \
         main.c \
         patterns.c \
         uicomponents.c
@@ -32,6 +33,7 @@ HEADERS += \
     Scene.h \
     Settings.h \
     Timer.h \
+    levels.h \
     patterns.h \
     uicomponents.h
 
