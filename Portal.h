@@ -34,6 +34,6 @@ typedef struct Portal_s
     float radius;
 
     /// @brief Pointeur vers le portail associé
-    void* linked_portal;
+    struct Portal_s* linked_portal;
 
 }Portal;

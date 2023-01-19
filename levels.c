@@ -11,6 +11,11 @@ void craft_level_1(Scene *self)
 
 void craft_level_1_boss(Scene *self)
 {
+	//création des portails
+	
+
+	//--------------------------------------------------------------------------
+	//création d'enemies
 	Enemy *enemy = Enemy_New(self, ENEMY_FIGHTER, Vec2_Set(15.0f, 0.5f));
 	enemy->updatePos = get_pattern(PATTERN_ENEMY_MOVE, 2);
 	enemy->throwAttack = get_pattern(PATTERN_ENEMY_THROW, 1);
