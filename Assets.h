@@ -32,11 +32,20 @@ typedef struct Assets_s
     /// @brief Texture du tir du joueur.
     SDL_Texture *playerBullet;
 
+	/// @brief Texture of the player's special attack.
+	SDL_Texture *playerSpecialBullet;
+
     /// @brief Texture du vaisseau ennemi.
     SDL_Texture *fighter;
 
     /// @brief Texture du tir d'un ennemi.
     SDL_Texture *fighterBullet;
+
+	/// @brief Texture of a heal drop.
+	SDL_Texture *healDrop;
+
+	/// @brief Texture of an explosion
+	SDL_Texture *explosion;
 
 	/// @brief Background of the start menu.
 	SDL_Texture *startScreen;
@@ -49,6 +58,12 @@ typedef struct Assets_s
 
 	/// @brief Blinking message on the loser's screen.
 	SDL_Texture *lostScreenMessage;
+
+	/// @brief Background of the winner's menu.
+	SDL_Texture *wonScreen;
+
+	/// @brief Blinking message when the user finished all the levels.
+	SDL_Texture *wonScreenMessage;
 
 	///@brief Total anims available in the assets.
 	Animation *animations[SCENE_ANIM_NUM_MAX];
