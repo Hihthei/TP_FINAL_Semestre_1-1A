@@ -122,6 +122,7 @@ void Enemy_Render(Enemy *self)
 void Enemy_Damage(Enemy *self, int damage)
 {
 	self->lifePoints -= damage;
+	Scene_AppendBullet(self->scene, Explosion_New(self->scene, self->position));
 	if (self->lifePoints <= 0) {
 		self->state = ENEMY_DEAD;
 		mixer_play_music(self->scene->mixer, DestructionSound, 1);

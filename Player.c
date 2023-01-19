@@ -92,6 +92,7 @@ void Player_Update_impl(Player *self, PatternData *d)
 	if (input->specialPressed) {
 		if (self->lastSpecialAttack == -1 || self->lastSpecialAttack > 3) {
 			Bullet *bullet = Bullet_New(self->scene, self->position, Vec2_Set(6.0f, 0.0f), BULLET_PLAYER, 90.0f, 3);
+			bullet->texture = self->scene->assets->playerSpecialBullet;
 			bullet->updatePos = &bullet_enemy_auto_focus_pattern;
 			Scene_AppendBullet(self->scene, bullet);
 			mixer_play_music(self->scene->mixer, PlayerSpecialShotSound, 1);
@@ -130,7 +131,10 @@ void Player_Damage(Player *self, int damage, Bullet *bullet)
 {
 	UNUSED(bullet);
 
-	self->lifePoints = self->lifePoints - damage;
+	if (damage < 0) {
+		Scene_AppendBullet(self->scene, Explosion_New(self->scene, bullet->position));
+	}
+	self->lifePoints -= damage;
 	if (self->lifePoints > 20) {
 		if (self->state != PLAYER_FLYING) {
 			mixer_play_music(self->scene->mixer, NoCrisisSound, -1);
@@ -152,5 +156,6 @@ void Player_Ship_Collision(Player *self, Enemy *e)
 	Enemy_Damage(e, 30);
 	Player_Damage(self, e->collisionDamages, NULL);
 	self->playerCollision();
+	Scene_AppendBullet(self->scene, Explosion_New(self->scene, self->position));
 	mixer_play_music(self->scene->mixer, CollisionSound, 1);
 }

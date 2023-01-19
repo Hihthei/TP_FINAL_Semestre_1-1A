@@ -34,6 +34,8 @@ void Assets_Load(Assets *self, SDL_Renderer *renderer)
 		{ &self->startScreenMessage, "../Assets/Background/texte_open_screen.png"},
 		{ &self->lostScreen,    "../Assets/Background/dead_screen.png"},
 		{ &self->lostScreenMessage, "../Assets/Background/texte_dead_screen.png"},
+		{ &self->healDrop, "../Assets/Enemy/fighter_bullet_health.png"},
+		{ &self->playerSpecialBullet, "../Assets/Player/bullet_special.png"},
 	};
 	int texSpecCount = sizeof(texSpecs) / sizeof(TextureSpec);
 
