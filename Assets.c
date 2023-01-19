@@ -30,6 +30,8 @@ void Assets_Load(Assets *self, SDL_Renderer *renderer)
 		{ &self->playerBullet,  "../Assets/Player/bullet_default.png" },
 		{ &self->fighter,       "../Assets/Enemy/fighter.png"         },
 		{ &self->fighterBullet, "../Assets/Enemy/fighter_bullet.png"  },
+		{ &self->portal[0],		"../Assets/Portal/blue_portal.png"	  },
+		{ & self->portal[1],		"../Assets/Portal/red_portal.png" },
 		{ &self->startScreen,   "../Assets/Background/open_screen.png"},
 		{ &self->startScreenMessage, "../Assets/Background/texte_open_screen.png"},
 		{ &self->lostScreen,    "../Assets/Background/dead_screen.png"},
@@ -37,6 +39,7 @@ void Assets_Load(Assets *self, SDL_Renderer *renderer)
 		{ &self->healDrop, "../Assets/Enemy/fighter_bullet_health.png"},
 		{ &self->playerSpecialBullet, "../Assets/Player/bullet_special.png"},
 		{ &self->explosion, "../Assets/explosion.png"},
+		
 	};
 	int texSpecCount = sizeof(texSpecs) / sizeof(TextureSpec);
 
@@ -93,6 +96,8 @@ void Assets_Delete(Assets *self)
         &self->playerBullet,
         &self->fighter,
         &self->fighterBullet,
+		& self->portal[0],
+		& self->portal[1],
 		&self->player,
 		&self->startScreen,
 		&self->startScreenMessage,

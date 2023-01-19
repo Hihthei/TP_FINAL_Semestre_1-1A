@@ -26,8 +26,10 @@ Bullet *Bullet_New(Scene *scene, Vec2 position, Vec2 velocity, int type, float a
 
 	Assets *assets = Scene_GetAssets(scene);
 
+
 	self->worldW = 8 * PIX_TO_WORLD;
 	self->worldH = 16 * PIX_TO_WORLD;
+
 
 	//fighter_bullet.png
     switch (type)
@@ -37,11 +39,13 @@ Bullet *Bullet_New(Scene *scene, Vec2 position, Vec2 velocity, int type, float a
         self->radius = 0.05f;
         self->fromPlayer = false;
         break;
+
 	case BULLET_EXPLOSION:
 		self->texture = scene->assets->explosion;
 		self->radius = 0.02f;
 		self->fromPlayer = false;
 		break;
+
     default:
     case BULLET_PLAYER:
 		self->texture = assets->playerBullet;
@@ -53,9 +57,9 @@ Bullet *Bullet_New(Scene *scene, Vec2 position, Vec2 velocity, int type, float a
     return self;
 }
 
-Bullet *Explosion_New(Scene *scene, Vec2 position)
+Bullet* Explosion_New(Scene* scene, Vec2 position)
 {
-	Bullet *exp = Bullet_New(scene, position, Vec2_Zero, BULLET_EXPLOSION, 0, 0);
+	Bullet* exp = Bullet_New(scene, position, Vec2_Zero, BULLET_EXPLOSION, 0, 0);
 	exp->updatePos = &bullet_auto_depop_pattern;
 	return exp;
 }

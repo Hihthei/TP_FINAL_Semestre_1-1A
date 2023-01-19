@@ -23,9 +23,10 @@
 #define BOSS_DAMAGES 5
 
 
-	/*
-	 * [SECTION] Helper structures and functions for the pattern functions
-	 */
+
+/*
+ * [SECTION] Helper structures and functions for the pattern functions
+ */
 
 
 float absf(float f)
@@ -40,6 +41,8 @@ struct SlowData_t
 {
 	float sourceTime;
 };
+
+
 
 struct SpiralData_t
 {
@@ -64,9 +67,10 @@ struct ThreeThrows_t
 };
 
 
-	/*
-	 * [SECTION] Enemy position patterns
-	 */
+
+/*
+ * [SECTION] Enemy position patterns
+ */
 
 
 void enemy_update_pos_pattern(Enemy *self, PatternData *d)
@@ -134,9 +138,10 @@ void enemy_kamikaze_pos_pattern(Enemy *self, PatternData *d)
 }
 
 
-	/*
-	 * [SECTION] Bullet patterns
-	 */
+/*
+* [SECTION] Bullet patterns
+*/
+
 
 
 void bullet_spiral_pattern(struct Bullet_s *self, PatternData *d)
@@ -181,6 +186,8 @@ void bullet_random_pattern(struct Bullet_s *self, PatternData *d)
 							 );
 }
 
+
+
 void bullet_slow_pattern(struct Bullet_s *self, PatternData *d)
 {
 	if (d->destroy) {
@@ -189,6 +196,10 @@ void bullet_slow_pattern(struct Bullet_s *self, PatternData *d)
 		}
 		return;
 	}
+
+	/*
+	 * [SECTION] Enemy's bullet sending pattern.
+	 */
 
 	struct SpiralData_t *as = (struct SpiralData_t *)d->data;
 
@@ -217,11 +228,9 @@ void bullet_player_auto_focus_pattern(struct Bullet_s *self, PatternData *d)
 	}
 }
 
-
-	/*
-	 * [SECTION] Enemy's bullet sending pattern.
-	 */
-
+/*
+* [SECTION] Enemy's bullet sending pattern.
+*/
 
 void enemy_throw_pattern(Enemy *self, PatternData *d)
 {
@@ -468,17 +477,17 @@ void bullet_enemy_auto_focus_pattern(struct Bullet_s *self, PatternData *d)
 	self->angle = angle_radian_to_degrees(Vec2_AngleBetweenY(self->velocity));
 }
 
-void enemy_drops_life(Enemy *self, PatternData *d)
+void enemy_drops_life(Enemy* self, PatternData* d)
 {
 	if (d->destroy) {
 		//The enemy's dead, generate the power up.
-		Bullet *bullet = Bullet_New(self->scene, self->position, Vec2_Set(0, 0), BULLET_FIGHTER, 90.0f, -15);
+		Bullet* bullet = Bullet_New(self->scene, self->position, Vec2_Set(0, 0), BULLET_FIGHTER, 90.0f, -15);
 		bullet->texture = self->scene->assets->healDrop;
 		Scene_AppendBullet(self->scene, bullet);
 	}
 }
 
-void bullet_auto_depop_pattern(struct Bullet_s *self, PatternData *d)
+void bullet_auto_depop_pattern(struct Bullet_s* self, PatternData* d)
 {
 	if (d->destroy) {
 		if (d->data) {
@@ -487,11 +496,11 @@ void bullet_auto_depop_pattern(struct Bullet_s *self, PatternData *d)
 		return;
 	}
 
-	float *as = (float *)d->data;
+	float* as = (float*)d->data;
 
 	if (!as) {
 		d->data = malloc(sizeof(float));
-		as = (float *)d->data;
+		as = (float*)d->data;
 		(*as) = 0;
 	}
 

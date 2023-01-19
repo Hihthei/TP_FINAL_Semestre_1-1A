@@ -15,8 +15,8 @@ typedef enum BulletType_e
     /// @brief Projectile normal provenant d'un ennemi.
     BULLET_FIGHTER,
 
-	/// @brief Bullet as explosion.
-	BULLET_EXPLOSION
+    /// @brief Bullet as explosion.
+    BULLET_EXPLOSION,
 } BulletType;
 
 /// @brief Structure représentant un projectile.
@@ -92,4 +92,4 @@ void Bullet_Render(Bullet *self);
 /// @brief Generate an explosion, a bullet that has no damages.
 /// @param scene the scene.
 /// @param position of the explosion.
-Bullet *Explosion_New(Scene *scene, Vec2 position);
+Bullet* Explosion_New(Scene* scene, Vec2 position);

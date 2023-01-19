@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "Scene.h"
 #include "Common.h"
+#include "mixer.h"
 
 
 void Player_Update_impl(Player *, PatternData *);
@@ -131,7 +132,8 @@ void Player_Damage(Player *self, int damage, Bullet *bullet)
 {
 	if (damage < 0) {
 		Scene_AppendBullet(self->scene, Explosion_New(self->scene, self->position));
-	} else if (damage != 0 && bullet) {
+	}
+	else if (damage != 0 && bullet) {
 		Scene_AppendBullet(self->scene, Explosion_New(self->scene, bullet->position));
 	}
 	self->lifePoints -= damage;
@@ -140,10 +142,11 @@ void Player_Damage(Player *self, int damage, Bullet *bullet)
 			mixer_play_music(self->scene->mixer, NoCrisisSound, -1);
 			self->state = PLAYER_FLYING;
 		}
-	} else if (self->lifePoints <= 0) {
-			self->state = PLAYER_DEAD;
-			mixer_play_music(self->scene->mixer, DestructionSound, 1);
-			self->playerDead();
+	}
+	else if (self->lifePoints <= 0) {
+		self->state = PLAYER_DEAD;
+		mixer_play_music(self->scene->mixer, DestructionSound, 1);
+		self->playerDead();
 	} else {
 		self->state = PLAYER_DYING;
 		mixer_play_music(self->scene->mixer, CrisisSound, -1);
