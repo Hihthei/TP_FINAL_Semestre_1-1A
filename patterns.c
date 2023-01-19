@@ -19,6 +19,8 @@
 #define PATTERN_FRIEND_MOVE_MAX 0
 #define PATTERN_FRIEND_THROW_MAX 0
 
+#define NORMAL_DAMAGES 2
+#define BOSS_DAMAGES 5
 
 struct SpiralData_t
 {
@@ -215,7 +217,7 @@ void enemy_throw_pattern(Enemy *self, PatternData *d)
 	if (self->lastAttack == -1 || self->lastAttack > 5) {
 		self->lastAttack = 0;
 		Vec2 velocity = Vec2_Set(-2.0f, 0.0f);
-		Bullet *bullet = Bullet_New(self->scene, self->position, velocity, BULLET_FIGHTER, 90.0f, 1);
+		Bullet *bullet = Bullet_New(self->scene, self->position, velocity, BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES);
 		bullet->updatePos = &bullet_auto_focus_pattern;
 		Scene_AppendBullet(self->scene, bullet);
 	} else {
@@ -246,7 +248,7 @@ void enemy_throw_two_pattern(Enemy *self, PatternData *d)
 		if (as->second > 0.5) {
 			as->state = false;
 			as->second = 0;
-			Scene_AppendBullet(d->scene, Bullet_New(d->scene, self->position, Vec2_Set(-3.0, 0), BULLET_FIGHTER, 90.0f, 1));
+			Scene_AppendBullet(d->scene, Bullet_New(d->scene, self->position, Vec2_Set(-3.0, 0), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
 			return;
 		}
 	} else {
@@ -254,7 +256,7 @@ void enemy_throw_two_pattern(Enemy *self, PatternData *d)
 		if (as->first > 2) {
 			as->state = true;
 			as->first = 0;
-			Scene_AppendBullet(d->scene, Bullet_New(d->scene, self->position, Vec2_Set(-3.0, 0), BULLET_FIGHTER, 90.0f, 1));
+			Scene_AppendBullet(d->scene, Bullet_New(d->scene, self->position, Vec2_Set(-3.0, 0), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
 			return;
 		}
 	}
@@ -287,7 +289,7 @@ void enemy_throw_three_pattern(Enemy *self, PatternData *d)
 	}
 
 	if (as->mid) {
-		Bullet *bullet = Bullet_New(d->scene, self->position, Vec2_Set(-3, 0), BULLET_FIGHTER, 90.0f, 1);
+		Bullet *bullet = Bullet_New(d->scene, self->position, Vec2_Set(-3, 0), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES);
 		Scene_AppendBullet(d->scene, bullet);
 	}
 	if (as->first > 0.2) {
@@ -297,9 +299,9 @@ void enemy_throw_three_pattern(Enemy *self, PatternData *d)
 			as->a = 0;
 		}
 
-		Bullet *bullet = Bullet_New(d->scene, self->position, Vec2_Rotate(Vec2_Set(-2, 0), as->a), BULLET_FIGHTER, 90.0f, 1);
+		Bullet *bullet = Bullet_New(d->scene, self->position, Vec2_Rotate(Vec2_Set(-2, 0), as->a), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES);
 		Scene_AppendBullet(d->scene, bullet);
-		bullet = Bullet_New(d->scene, self->position, Vec2_Rotate(Vec2_Set(-2, 0), -as->a), BULLET_FIGHTER, 90.0f, 1);
+		bullet = Bullet_New(d->scene, self->position, Vec2_Rotate(Vec2_Set(-2, 0), -as->a), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES);
 		Scene_AppendBullet(d->scene, bullet);
 	}
 }
@@ -346,8 +348,8 @@ void enemy_throw_mid_three_pattern(Enemy *self, PatternData *d)
 		}
 
 		Scene_AppendBullet(d->scene, Bullet_New(d->scene, self->position, Vec2_Set(-2, 0), BULLET_FIGHTER, 90.0f, 2));
-		Scene_AppendBullet(d->scene, Bullet_New(d->scene, self->position, Vec2_Rotate(Vec2_Set(-2, 0), as->a), BULLET_FIGHTER, 90.0f, 1));
-		Scene_AppendBullet(d->scene, Bullet_New(d->scene, self->position, Vec2_Rotate(Vec2_Set(-2, 0), -as->a), BULLET_FIGHTER, 90.0f, 1));
+		Scene_AppendBullet(d->scene, Bullet_New(d->scene, self->position, Vec2_Rotate(Vec2_Set(-2, 0), as->a), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
+		Scene_AppendBullet(d->scene, Bullet_New(d->scene, self->position, Vec2_Rotate(Vec2_Set(-2, 0), -as->a), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
 	}
 }
 
@@ -375,15 +377,15 @@ void enemy_throw_hard_pattern(Enemy *self, PatternData *d)
 
 	as->sourceTime += Timer_GetDelta(g_time);
 	if (as->sourceTime > 0.08) {
-		Scene_AppendBullet(d->scene, Bullet_New(d->scene, self->position, as->source, BULLET_FIGHTER, 90.0f, 1));
-		Scene_AppendBullet(d->scene, Bullet_New(d->scene, self->position, Vec2_Rotate(as->source, M_PI_2), BULLET_FIGHTER, 90.0f, 1));
-		Scene_AppendBullet(d->scene, Bullet_New(d->scene, self->position, Vec2_Rotate(as->source, M_PI), BULLET_FIGHTER, 90.0f, 1));
-		Scene_AppendBullet(d->scene, Bullet_New(d->scene, self->position, Vec2_Rotate(as->source, -M_PI_2), BULLET_FIGHTER, 90.0f, 1));
+		Scene_AppendBullet(d->scene, Bullet_New(d->scene, self->position, as->source, BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
+		Scene_AppendBullet(d->scene, Bullet_New(d->scene, self->position, Vec2_Rotate(as->source, M_PI_2), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
+		Scene_AppendBullet(d->scene, Bullet_New(d->scene, self->position, Vec2_Rotate(as->source, M_PI), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
+		Scene_AppendBullet(d->scene, Bullet_New(d->scene, self->position, Vec2_Rotate(as->source, -M_PI_2), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
 
-		Scene_AppendBullet(d->scene, Bullet_New(d->scene, self->position, as->source2, BULLET_FIGHTER, 90.0f, 1));
-		Scene_AppendBullet(d->scene, Bullet_New(d->scene, self->position, Vec2_Rotate(as->source2, M_PI_2), BULLET_FIGHTER, 90.0f, 1));
-		Scene_AppendBullet(d->scene, Bullet_New(d->scene, self->position, Vec2_Rotate(as->source2, M_PI), BULLET_FIGHTER, 90.0f, 1));
-		Scene_AppendBullet(d->scene, Bullet_New(d->scene, self->position, Vec2_Rotate(as->source2, -M_PI_2), BULLET_FIGHTER, 90.0f, 1));
+		Scene_AppendBullet(d->scene, Bullet_New(d->scene, self->position, as->source2, BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
+		Scene_AppendBullet(d->scene, Bullet_New(d->scene, self->position, Vec2_Rotate(as->source2, M_PI_2), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
+		Scene_AppendBullet(d->scene, Bullet_New(d->scene, self->position, Vec2_Rotate(as->source2, M_PI), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
+		Scene_AppendBullet(d->scene, Bullet_New(d->scene, self->position, Vec2_Rotate(as->source2, -M_PI_2), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
 		as->source = Vec2_Rotate(as->source, 0.5);
 		as->source2 = Vec2_Rotate(as->source2, -0.5);
 		as->sourceTime = 0;
@@ -411,7 +413,7 @@ void enemy_auto_aim_pattern(Enemy *self, PatternData *d)
 
 	if ((*as) <= 1.0) {
 		Vec2 direction = Vec2_Normalize(Vec2_Sub(d->scene->player->position, self->position));
-		Bullet *bullet = Bullet_New(d->scene, self->position, Vec2_Scale(direction, 3), BULLET_FIGHTER, 90.0f, 1);
+		Bullet *bullet = Bullet_New(d->scene, self->position, Vec2_Scale(direction, 3), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES);
 		Scene_AppendBullet(d->scene, bullet);
 	} else if ((*as) >= 2) {
 		(*as) = 0;

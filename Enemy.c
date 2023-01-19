@@ -50,7 +50,7 @@ void Enemy_Delete(Enemy *self)
     if (!self) return;
 
 	invalidate_patterns_data(&self->_data[0], 4);
-	self->enemyRaisedOrDead(NULL, &self->_data[3]);
+	self->enemyRaisedOrDead(self, &self->_data[3]);
 	self->update(NULL, &self->_data[0]);
 	self->updatePos(NULL, &self->_data[1]);
 	self->throwAttack(NULL, &self->_data[2]);

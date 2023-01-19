@@ -35,8 +35,7 @@ void Scene_Unload(Scene *self)
 	self->enemyCount = 0;
 	for (int i = 0; i < self->bulletCount; i++)
 	{
-		Bullet_Delete(self->bullets[i]);
-		self->bullets[i] = NULL;
+		Scene_RemoveBullet(self, 0);
 	}
 	self->bulletCount = 0;
 	if (self->player) {
@@ -130,7 +129,7 @@ bool Scene_Update(Scene *self)
 					if (dist < bullet->radius + enemy->radius)
 					{
 						// Inflige des dommages à l'ennemi
-						Enemy_Damage(enemy, 1);
+						Enemy_Damage(enemy, bullet->damages);
 
 						// Supprime le tir
 						Scene_RemoveBullet(self, i);
