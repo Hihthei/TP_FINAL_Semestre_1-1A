@@ -46,8 +46,7 @@ void ui_element_init(UiElement *e)
 void ui_LifeBar_update(LifeBar *b, Scene *scene)
 {
 	b->lifePoints = scene->player->lifePoints;
-	b->lifePoints = scene->player->lifePoints;
-	b->base.position = Vec2_Add(add_y, scene->player->position);
+	b->base.position = Vec2_Add(Vec2_Set(-scene->player->radius-0.5, -scene->player->radius - 0.5), scene->player->position);
 }
 
 void ui_Overlay_update(Overlay *b, Scene *s)
