@@ -129,9 +129,9 @@ void Player_Render(Player *self)
 //Bullet might be null if we collided with another ship.
 void Player_Damage(Player *self, int damage, Bullet *bullet)
 {
-	UNUSED(bullet);
-
 	if (damage < 0) {
+		Scene_AppendBullet(self->scene, Explosion_New(self->scene, self->position));
+	} else if (damage != 0 && bullet) {
 		Scene_AppendBullet(self->scene, Explosion_New(self->scene, bullet->position));
 	}
 	self->lifePoints -= damage;

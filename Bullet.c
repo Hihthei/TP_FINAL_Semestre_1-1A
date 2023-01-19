@@ -41,6 +41,7 @@ Bullet *Bullet_New(Scene *scene, Vec2 position, Vec2 velocity, int type, float a
 		self->texture = scene->assets->explosion;
 		self->radius = 0.02f;
 		self->fromPlayer = false;
+		break;
     default:
     case BULLET_PLAYER:
 		self->texture = assets->playerBullet;

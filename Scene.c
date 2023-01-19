@@ -174,17 +174,17 @@ bool Scene_Update(Scene *self)
 
 			Enemy_Update(enemy);
 
+			//Look for a colision.
+			if (Vec2_Distance(player->position, enemy->position) <= (enemy->radius + player->radius)) {
+				//Trigger the collision.
+				Player_Ship_Collision(player, enemy);
+			}
+
 			if (enemy->state == ENEMY_DEAD)
 			{
 				// Supprime l'ennemi
 				Scene_RemoveEnemy(self, i);
 				removed = true;
-			}
-
-			//Look for a colision.
-			if (Vec2_Distance(player->position, enemy->position) <= (enemy->radius + player->radius)) {
-				//Trigger the collision.
-				Player_Ship_Collision(player, enemy);
 			}
 
 			// Passe au prochain ennemi
