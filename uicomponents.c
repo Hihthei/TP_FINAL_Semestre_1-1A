@@ -65,6 +65,12 @@ void ui_Button_update(Button *self, Scene *scene)
 	}
 }
 
+void ui_BlinkingButton_update(BlinkingButton *self, Scene *scene)
+{
+	ui_Button_update((Button *)self, scene);
+	self->time += Timer_GetDelta(g_time);
+}
+
 void ui_LifeBar_render(LifeBar *self, Scene *scene)
 {
 	SDL_Renderer *renderer = Scene_GetRenderer(scene);
@@ -113,13 +119,11 @@ void ui_Overlay_render(Overlay *self, Scene *scene)
 	// en tuiles, la taille de la fenêtre et la taille des textures.
 	float scale = Camera_GetWorldToViewScale(camera);
 	SDL_FRect dst = { 0 };
-	// Changez 48 par une autre valeur pour grossir ou réduire l'objet
-	dst.h = 48 * PIX_TO_WORLD * scale;
-	dst.w = 48 * PIX_TO_WORLD * scale;
+	dst.h = self->base.size.x * scale;
+	dst.w = self->base.size.y * scale;
 	Camera_WorldToView(camera, self->base.position, &dst.x, &dst.y);
-	// Le point de référence est le centre de l'objet
-	dst.x -= 0.50f * dst.w;
-	dst.y -= 0.50f * dst.h;
+	dst.x = self->base.position.x * scale;
+	dst.y = self->base.position.y * scale;
 
 	SDL_Rect rect = {(int)dst.x, (int)dst.y, (int)dst.w, (int)dst.h};
 
@@ -136,15 +140,41 @@ void ui_Button_render(Button *self, Scene *scene)
 		// en tuiles, la taille de la fenêtre et la taille des textures.
 		float scale = Camera_GetWorldToViewScale(camera);
 		SDL_FRect dst = { 0 };
-		// Changez 48 par une autre valeur pour grossir ou réduire l'objet
-		dst.h = self->base.size.x * 48 * PIX_TO_WORLD * scale;
-		dst.w = self->base.size.y * 48 * PIX_TO_WORLD * scale;
+		dst.h = self->base.size.x * scale;
+		dst.w = self->base.size.y * scale;
 		Camera_WorldToView(camera, self->base.position, &dst.x, &dst.y);
-		// Le point de référence est le centre de l'objet
-		dst.x -= 0.50f * dst.w;
-		dst.y -= 0.50f * dst.h;
+		dst.x = self->base.position.x * scale;
+		dst.y = self->base.position.y * scale;
 
-		SDL_RenderCopyExF(renderer, self->image, NULL, &dst, 90.0f, NULL, 0);
+		SDL_RenderCopyExF(renderer, self->image, NULL, &dst, 0, NULL, 0);
+	}
+}
+
+void ui_BlinkingButton_render(BlinkingButton *self, Scene *scene)
+{
+	if (self->base.image) {
+		SDL_Renderer *renderer = Scene_GetRenderer(scene);
+		Camera *camera = Scene_GetCamera(scene);
+		// On calcule la position en pixels en fonction de la position
+		// en tuiles, la taille de la fenêtre et la taille des textures.
+		float scale = Camera_GetWorldToViewScale(camera);
+		SDL_FRect dst = { 0 };
+		dst.h = self->base.base.size.x * scale;
+		dst.w = self->base.base.size.y * scale;
+		Camera_WorldToView(camera, self->base.base.position, &dst.x, &dst.y);
+
+		dst.x = self->base.base.position.x * scale;
+		dst.y = self->base.base.position.y * scale;
+
+		SDL_RenderCopyExF(renderer, self->base.image, NULL, &dst, 0, NULL, 0);
+
+		if (self->blinking && self->time >= 0.5) {
+			if (self->time >= 2) {
+				self->time = 0;
+				return;
+			}
+			SDL_RenderCopyExF(renderer, self->blinking, NULL, &dst, 0, NULL, 0);
+		}
 	}
 }
 
@@ -161,6 +191,11 @@ void ui_Overlay_destroy(Overlay *o)
 void ui_Button_destroy(Button *btn)
 {
 	UNUSED(btn);
+}
+
+void ui_BlinkingButton_destroy(BlinkingButton *bb)
+{
+	UNUSED(bb);
 }
 
 UiElement *ui_element_Overlay_new()
@@ -194,10 +229,8 @@ UiElement *ui_element_LifeBar_new()
 	return (UiElement *)b;
 }
 
-UiElement *ui_element_Button_new()
+void ui_element_Button_init(Button *btn)
 {
-	Button *btn = (Button *)malloc(sizeof(Button));
-	memset(btn, 0, sizeof(Button));
 	ui_element_init((UiElement *)btn);
 
 	btn->clicked = false;
@@ -206,6 +239,29 @@ UiElement *ui_element_Button_new()
 	btn->base.destroy = (void (*)(UiElement *)) &ui_Button_destroy;
 	btn->base.render = (void (*)(UiElement *, Scene *)) &ui_Button_render;
 	btn->base.update = (void (*)(UiElement *, Scene *)) &ui_Button_update;
+}
+
+UiElement *ui_element_Button_new()
+{
+	Button *btn = (Button *)malloc(sizeof(Button));
+	memset(btn, 0, sizeof(Button));
+	ui_element_Button_init(btn);
 
 	return (UiElement *)btn;
+}
+
+UiElement *ui_element_BlinkingButton_new()
+{
+	BlinkingButton *bb = (BlinkingButton *)malloc(sizeof(BlinkingButton));
+	memset(bb, 0, sizeof(BlinkingButton));
+	ui_element_Button_init((Button *)bb);
+
+	bb->blinking = NULL;
+	bb->time = 0;
+
+	((UiElement *)bb)->destroy = (void (*)(UiElement *)) &ui_BlinkingButton_destroy;
+	((UiElement *)bb)->render = (void (*)(UiElement *, Scene *)) &ui_BlinkingButton_render;
+	((UiElement *)bb)->update = (void (*)(UiElement *, Scene *)) &ui_BlinkingButton_update;
+
+	return (UiElement *)bb;
 }

@@ -18,6 +18,7 @@ SOURCES += \
         Timer.c \
         levels.c \
         main.c \
+        mixer.c \
         patterns.c \
         uicomponents.c
 
@@ -34,6 +35,7 @@ HEADERS += \
     Settings.h \
     Timer.h \
     levels.h \
+    mixer.h \
     patterns.h \
     uicomponents.h
 

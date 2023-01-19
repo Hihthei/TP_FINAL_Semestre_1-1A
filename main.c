@@ -73,10 +73,11 @@ int main(int argc, char *argv[])
 	bool no_quit = true;
 	//Show the menu.
 
-	UiElement *button = ui_element_Button_new();
-	button->size = Vec2_Set(4, 3);
-	button->position = Vec2_Set((16-4)/2, (9-3)/2);
-	//((Button *)button)->image = scene.;
+	UiElement *button = ui_element_BlinkingButton_new();
+	button->size = Vec2_Set(9, 16);
+	button->position = Vec2_Set(0, 0);
+	((Button *)button)->image = scene->assets->startScreen;
+	((BlinkingButton *)button)->blinking = scene->assets->startScreenMessage;
 	Scene_AddUiElement(scene, button);
 
 	scene->ui_mode = true;
@@ -149,7 +150,7 @@ load_game:
 		scene->ui_mode = true;
 
 		//Display new data.
-		button = ui_element_Button_new();
+		button = ui_element_BlinkingButton_new();
 		button->size = Vec2_Set(4, 3);
 		button->position = Vec2_Set((16-4)/2, (9-3)/2);
 		Scene_AddUiElement(scene, button);

@@ -10,6 +10,7 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "uicomponents.h"
+#include "mixer.h"
 
 // Nombre maximal d'ennemis actifs dans un niveau.
 #define ENEMY_CAPACITY 32
@@ -42,6 +43,9 @@ typedef struct Scene_s
 
     /// @brief Entrée utilisateur.
     Input *input;
+
+	/// @brief Sound mixer of the scene.
+	Mixer *mixer;
 
     /// @brief Joueur principal.
     Player *player;

@@ -13,6 +13,7 @@ Scene *Scene_New(SDL_Renderer *renderer)
 	self->assets = Assets_New();
     self->camera = Camera_New(LOGICAL_WIDTH, LOGICAL_HEIGHT);
 	self->input = Input_New();
+	self->mixer = mixer_new();
     self->waveIdx = 0;
 
 	memset(self->waves, 0, sizeof(void_scene_level_func_ptr)*WAVES_CAPACITY);
@@ -66,8 +67,10 @@ void Scene_Delete(Scene *self)
 	if (self->player) {
 		Player_Delete(self->player);
 	}
-	Camera_Delete(self->camera);
+
+	mixer_delete(self->mixer);
 	Input_Delete(self->input);
+	Camera_Delete(self->camera);
 	Assets_Delete(self->assets);
 
     free(self);

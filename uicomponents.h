@@ -32,9 +32,17 @@ typedef struct Button_t
 	bool clicked;
 } Button;
 
+typedef struct BlinkingButton_t
+{
+	Button base;
+	SDL_Texture *blinking;
+	float time;
+} BlinkingButton;
+
 UiElement *ui_element_LifeBar_new();
 UiElement *ui_element_Overlay_new();
 UiElement *ui_element_Button_new();
+UiElement *ui_element_BlinkingButton_new();
 
 void ui_element_delete(UiElement *self);
 void ui_element_render(UiElement *self, Scene *s);

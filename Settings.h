@@ -20,7 +20,7 @@ static inline void nofunc() {};
 #  include "SDL.h"
 #  include "SDL_image.h"
 //#  include "SDL_ttf.h"
-//#  include "SDL_mixer.h"
+#  include "SDL_mixer.h"
 
 //These are not provided in MS libs.
 
@@ -32,7 +32,7 @@ static inline void nofunc() {};
 #  include <SDL2/SDL.h>
 #  include <SDL2/SDL_image.h>
 //#  include <SDL2/SDL_ttf.h>
-//#  include <SDL2/SDL_mixer.h>
+#  include <SDL2/SDL_mixer.h>
 #endif
 
 #ifdef _WIN32
@@ -60,3 +60,5 @@ static inline void nofunc() {};
 #  define LOGICAL_WIDTH  HD_WIDTH
 #  define LOGICAL_HEIGHT HD_HEIGHT
 #endif
+
+#define SDL_MIXER_CHANNELS 8
