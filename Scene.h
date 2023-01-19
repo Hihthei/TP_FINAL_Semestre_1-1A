@@ -11,6 +11,7 @@
 #include "Enemy.h"
 #include "uicomponents.h"
 #include "mixer.h"
+#include "Portal.h"
 
 // Nombre maximal d'ennemis actifs dans un niveau.
 #define ENEMY_CAPACITY 32
@@ -23,6 +24,9 @@
 
 // Maximum number of waves.
 #define WAVES_CAPACITY 10
+
+// Maximum number of portal
+#define PORTAL_CAPACITY 4
 
 struct UiElement_t;
 struct Scene_s;
@@ -61,6 +65,12 @@ typedef struct Scene_s
 
     /// @brief Nombre de projectiles courrants.
     int bulletCount;
+
+    /// @brief Tableau contenant les portails actifs.
+    Portal* portals[PORTAL_CAPACITY];
+
+    /// @brief Nombre de portails actifs.
+    int portalsCount;
 
 	/// @brief Les ?l?ments visuels ind?pendants de la sc?ne.
 	struct UiElement_t *elements[UIC_CAPACITY];
@@ -108,6 +118,11 @@ void Scene_Render(Scene *self);
 /// @param self la scène.
 /// @param bullet le projectile à ajouter (correctement initialisé).
 void Scene_AppendBullet(Scene *self, Bullet *bullet);
+
+/// @brief Ajoute un nouveau portail à la scène.
+/// @param self la scène.
+/// @param portal le portail à ajouter (correctement initialisé).
+void Scene_AppendPortal(Scene* self, Portal* portal);
 
 /// @brief Supprime un projectile de la scène.
 /// @param self la scène.

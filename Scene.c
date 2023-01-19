@@ -200,6 +200,37 @@ bool Scene_Update(Scene *self)
 		Player_Update(self->player);
 
 		// -------------------------------------------------------------------------
+		// Met à jour les portails
+
+		i = 0;
+		while (i < self->portalsCount)
+		{
+			Portal* portal = self->portals[i];
+			bool removed = false;
+
+			Enemy_Update(enemy);
+
+			if (enemy->state == ENEMY_DEAD)
+			{
+				// Supprime l'ennemi
+				Scene_RemoveEnemy(self, i);
+				removed = true;
+			}
+
+			//Look for a colision.
+			if (Vec2_Distance(player->position, enemy->position) <= (enemy->radius + player->radius)) {
+				//Trigger the collision.
+				Player_Ship_Collision(player, enemy);
+			}
+
+			// Passe au prochain ennemi
+			if (removed == false)
+			{
+				i++;
+			}
+		}
+
+		// -------------------------------------------------------------------------
 		// Met à jour le niveau
 
 		Scene_UpdateLevel(self);
@@ -209,6 +240,8 @@ bool Scene_Update(Scene *self)
 	for (int i = 0; i < self->uicCount; i++) {
 		ui_element_update(self->elements[i], self);
 	}
+
+	
 
 	return (self->ui_mode == true ? self->input->quitPressed
 						  : (self->input->quitPressed || self->player->lifePoints <= 0));
@@ -284,6 +317,19 @@ void Scene_AppendBullet(Scene *self, Bullet *bullet)
         &(self->bulletCount),
         BULLET_CAPACITY
     );
+}
+
+void Scene_AppendPortal(Scene* self, Portal* portal)
+{
+	if (!self) {
+		return;
+	}
+	Scene_AppendObject(
+		portal,
+		(void**)(self->portals),
+		&(self->portalsCount),
+		PORTAL_CAPACITY
+	);
 }
 
 void Scene_AddUiElement(Scene *self, UiElement *e)
