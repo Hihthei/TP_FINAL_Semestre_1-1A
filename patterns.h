@@ -53,3 +53,6 @@ void set_patterns_scene(PatternData *d, int size, struct Scene_s *scene);
 /// @param pattern_type type of the pattern you want to get.
 /// @param pattern_id UID of the pattern of the given type.
 func_ptr get_pattern(PatternType pattern_type, unsigned int pattern_id);
+
+//Additional functions to get more features ;)
+void enemy_drops_life(struct Enemy_s *self, PatternData *d);

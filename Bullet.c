@@ -6,7 +6,7 @@
 void Bullet_Update_impl(Bullet *, PatternData *);
 void Bullet_Update_pos_impl(Bullet *, PatternData *);
 
-Bullet *Bullet_New(Scene *scene, Vec2 position, Vec2 velocity, int type, float angle)
+Bullet *Bullet_New(Scene *scene, Vec2 position, Vec2 velocity, int type, float angle, int damages)
 {
     Bullet *self = (Bullet *)calloc(1, sizeof(Bullet));
     AssertNew(self);

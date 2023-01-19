@@ -79,18 +79,17 @@ void Player_Update_impl(Player *self, PatternData *d)
 	// On récupère des infos essentielles (communes à tout objet)
 	Scene *scene = self->scene;
 	Input *input = Scene_GetInput(scene);
+	self->lastAttack += Timer_GetDelta(g_time);
 
 	self->updatePos(self, &self->_data[1]);
 
 	if (input->shootPressed) {
 		//Don't let 'em spam it all!
-		if (self->lastAttack == -1 || self->lastAttack > 50) {
+		if (self->lastAttack == -1 || self->lastAttack > 0.3) {
 			Vec2 velocity = Vec2_Set(4.0f, 0.0f);
-			Bullet *bullet = Bullet_New(self->scene, self->position, velocity, BULLET_PLAYER, 90.0f);
+			Bullet *bullet = Bullet_New(self->scene, self->position, velocity, BULLET_PLAYER, 90.0f, 1);
 			Scene_AppendBullet(self->scene, bullet);
 			self->lastAttack = 0;
-		} else {
-			self->lastAttack += g_time->elapsed;
 		}
 	}
 }
@@ -123,7 +122,7 @@ void Player_Render(Player *self)
 }
 
 //Bullet might be null if we collided with another ship.
-void Player_Damage(Player *self, int damage, void *bullet)
+void Player_Damage(Player *self, int damage, Bullet *bullet)
 {
 	UNUSED(bullet);
 
@@ -139,9 +138,8 @@ void Player_Damage(Player *self, int damage, void *bullet)
 
 void Player_Ship_Collision(Player *self, Enemy *e)
 {
-	printf("Collision detected!\n");
 	//Generates damages to both the ship and the player's one.
 	Enemy_Damage(e, 30);
-	Player_Damage(self, 30, NULL);
+	Player_Damage(self, e->collisionDamages, NULL);
 	self->playerCollision();
 }

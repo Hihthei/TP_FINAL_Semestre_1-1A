@@ -11,36 +11,25 @@ void craft_level_1(Scene *self)
 
 void craft_level_1_boss(Scene *self)
 {
-	Vec2 pos = Vec2_Set(15.0f, 4.5f);
-	Enemy *enemy = Enemy_New(self, ENEMY_FIGHTER, pos);
-	enemy->updatePos = get_pattern(PATTERN_ENEMY_MOVE, 2);
-	enemy->throwAttack = get_pattern(PATTERN_ENEMY_THROW, 1);
-	Scene_AppendEnemy(self, enemy);
-	enemy = Enemy_New(self, ENEMY_FIGHTER, pos);
+	Enemy *enemy = Enemy_New(self, ENEMY_FIGHTER, Vec2_Set(15.0f, 0.5f));
 	enemy->updatePos = get_pattern(PATTERN_ENEMY_MOVE, 2);
 	enemy->throwAttack = get_pattern(PATTERN_ENEMY_THROW, 1);
 	Scene_AppendEnemy(self, enemy);
 
-	pos = Vec2_Set(15.0f, 0.5f);
-	enemy = Enemy_New(self, ENEMY_FIGHTER, pos);
-	enemy->updatePos = get_pattern(PATTERN_ENEMY_MOVE, 2);
-	enemy->throwAttack = get_pattern(PATTERN_ENEMY_THROW, 1);
-	Scene_AppendEnemy(self, enemy);
-	enemy = Enemy_New(self, ENEMY_FIGHTER, pos);
+	enemy = Enemy_New(self, ENEMY_FIGHTER, Vec2_Set(15.0f, 3.2f));
 	enemy->updatePos = get_pattern(PATTERN_ENEMY_MOVE, 2);
 	enemy->throwAttack = get_pattern(PATTERN_ENEMY_THROW, 1);
 	Scene_AppendEnemy(self, enemy);
 
-	pos = Vec2_Set(15.0f, 8.5f);
-	enemy = Enemy_New(self, ENEMY_FIGHTER, pos);
-	enemy->updatePos = get_pattern(PATTERN_ENEMY_MOVE, 2);
-	enemy->throwAttack = get_pattern(PATTERN_ENEMY_THROW, 1);
-	Scene_AppendEnemy(self, enemy);
-	enemy = Enemy_New(self, ENEMY_FIGHTER, pos);
+	enemy = Enemy_New(self, ENEMY_FIGHTER, Vec2_Set(15.0f, 4.8f));
 	enemy->updatePos = get_pattern(PATTERN_ENEMY_MOVE, 2);
 	enemy->throwAttack = get_pattern(PATTERN_ENEMY_THROW, 1);
 	Scene_AppendEnemy(self, enemy);
 
+	enemy = Enemy_New(self, ENEMY_FIGHTER, Vec2_Set(15.0f, 8.5f));
+	enemy->updatePos = get_pattern(PATTERN_ENEMY_MOVE, 2);
+	enemy->throwAttack = get_pattern(PATTERN_ENEMY_THROW, 1);
+	Scene_AppendEnemy(self, enemy);
 }
 
 void craft_level_2(Scene *self)
@@ -61,6 +50,7 @@ void craft_level_2_boss(Scene *self)
 	Enemy *enemy = Enemy_New(self, ENEMY_FIGHTER, Vec2_Set(15.5f, 4.5f));
 	enemy->updatePos = get_pattern(PATTERN_ENEMY_MOVE, 2);
 	enemy->throwAttack = get_pattern(PATTERN_ENEMY_THROW, 5);
+	enemy->enemyRaisedOrDead = &enemy_drops_life;
 	Scene_AppendEnemy(self, enemy);
 
 	enemy = Enemy_New(self, ENEMY_FIGHTER, Vec2_Set(15.5, 0.5f));
@@ -105,11 +95,13 @@ void craft_level_4_5(Scene *self)
 	Enemy *enemy = Enemy_New(self, ENEMY_FIGHTER, Vec2_Set(15.5, 0.5));
 	enemy->updatePos = get_pattern(PATTERN_ENEMY_MOVE, 2);
 	enemy->throwAttack = get_pattern(PATTERN_ENEMY_THROW, 3);
+	enemy->enemyRaisedOrDead = &enemy_drops_life;
 	Scene_AppendEnemy(self, enemy);
 
 	enemy = Enemy_New(self, ENEMY_FIGHTER, Vec2_Set(15.5, 8.5));
 	enemy->updatePos = get_pattern(PATTERN_ENEMY_MOVE, 1);
 	enemy->throwAttack = get_pattern(PATTERN_ENEMY_THROW, 3);
+	enemy->enemyRaisedOrDead = &enemy_drops_life;
 	Scene_AppendEnemy(self, enemy);
 
 	enemy = Enemy_New(self, ENEMY_FIGHTER, Vec2_Set(15.5, 4.5));

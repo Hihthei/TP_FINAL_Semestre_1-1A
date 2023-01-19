@@ -93,7 +93,11 @@ void ui_LifeBar_render(LifeBar *self, Scene *scene)
 
 	SDL_Rect rect2 = {(int)dst.x, (int)dst.y, (int)dst.w, (int)dst.h};
 
-	SDL_SetRenderDrawColor (renderer, 10, 255, 10, 255);
+	if (scene->player->state == PLAYER_DYING) {
+		SDL_SetRenderDrawColor (renderer, 255, 10, 10, 255);
+	} else {
+		SDL_SetRenderDrawColor (renderer, 10, 255, 10, 255);
+	}
 	SDL_RenderFillRect (renderer, &rect2);
 
 	//Draw the edges of the rectangle
@@ -125,6 +129,23 @@ void ui_Overlay_render(Overlay *self, Scene *scene)
 
 void ui_Button_render(Button *self, Scene *scene)
 {
+	if (self->image) {
+		SDL_Renderer *renderer = Scene_GetRenderer(scene);
+		Camera *camera = Scene_GetCamera(scene);
+		// On calcule la position en pixels en fonction de la position
+		// en tuiles, la taille de la fenêtre et la taille des textures.
+		float scale = Camera_GetWorldToViewScale(camera);
+		SDL_FRect dst = { 0 };
+		// Changez 48 par une autre valeur pour grossir ou réduire l'objet
+		dst.h = self->base.size.x * 48 * PIX_TO_WORLD * scale;
+		dst.w = self->base.size.y * 48 * PIX_TO_WORLD * scale;
+		Camera_WorldToView(camera, self->base.position, &dst.x, &dst.y);
+		// Le point de référence est le centre de l'objet
+		dst.x -= 0.50f * dst.w;
+		dst.y -= 0.50f * dst.h;
+
+		SDL_RenderCopyExF(renderer, self->image, NULL, &dst, 90.0f, NULL, 0);
+	}
 }
 
 void ui_LifeBar_destroy(LifeBar *b)
@@ -152,7 +173,7 @@ UiElement *ui_element_Overlay_new()
 	o->color = c;
 
 	o->base.destroy = (void (*)(UiElement *)) &ui_Overlay_destroy;
-	o->base.render = (void (*)(UiElement *, Scene *s)) &ui_Overlay_render;
+	o->base.render = (void (*)(UiElement *, Scene *)) &ui_Overlay_render;
 	o->base.update = (void (*)(UiElement *, Scene *)) &ui_Overlay_update;
 
 	return (UiElement *)o;
@@ -167,15 +188,24 @@ UiElement *ui_element_LifeBar_new()
 	b->lifePoints = 0;
 
 	b->base.destroy = (void (*)(UiElement *)) &ui_LifeBar_destroy;
-	b->base.render = (void (*)(UiElement *, Scene *s)) &ui_LifeBar_render;
+	b->base.render = (void (*)(UiElement *, Scene *)) &ui_LifeBar_render;
 	b->base.update = (void (*)(UiElement *, Scene *)) &ui_LifeBar_update;
 
 	return (UiElement *)b;
 }
 
-UiElement *ui_element_Button_New()
+UiElement *ui_element_Button_new()
 {
 	Button *btn = (Button *)malloc(sizeof(Button));
 	memset(btn, 0, sizeof(Button));
 	ui_element_init((UiElement *)btn);
+
+	btn->clicked = false;
+	btn->image = NULL;
+
+	btn->base.destroy = (void (*)(UiElement *)) &ui_Button_destroy;
+	btn->base.render = (void (*)(UiElement *, Scene *)) &ui_Button_render;
+	btn->base.update = (void (*)(UiElement *, Scene *)) &ui_Button_update;
+
+	return (UiElement *)btn;
 }

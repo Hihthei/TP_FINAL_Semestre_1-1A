@@ -146,7 +146,7 @@ bool Scene_Update(Scene *self)
 				if (dist < bullet->radius + player->radius)
 				{
 					// Inflige des dommages au joueur
-					Player_Damage(player, 1, (void *)bullet);
+					Player_Damage(player, bullet->damages, bullet);
 
 					// Supprime le tir
 					Scene_RemoveBullet(self, i);
@@ -208,7 +208,8 @@ bool Scene_Update(Scene *self)
 		ui_element_update(self->elements[i], self);
 	}
 
-	return (self->input->quitPressed || self->player->lifePoints <= 0);
+	return (self->ui_mode == true ? self->input->quitPressed
+						  : (self->input->quitPressed || self->player->lifePoints <= 0));
 }
 
 void Scene_Render(Scene *self)
@@ -272,6 +273,9 @@ void Scene_AppendEnemy(Scene *self, Enemy *enemy)
 
 void Scene_AppendBullet(Scene *self, Bullet *bullet)
 {
+	if (!self) {
+		return;
+	}
     Scene_AppendObject(
         bullet,
         (void **)(self->bullets),
@@ -282,6 +286,9 @@ void Scene_AppendBullet(Scene *self, Bullet *bullet)
 
 void Scene_AddUiElement(Scene *self, UiElement *e)
 {
+	if (!self) {
+		return;
+	}
 	Scene_AppendObject(
 		e,
 		(void **)(self->elements),
@@ -317,6 +324,9 @@ void Scene_RemoveObject(int index, void **objectArray, int *count)
 
 void Scene_RemoveUiElement(Scene *self, UiElement *e)
 {
+	if (!self || !e) {
+		return;
+	}
 	int index = -1;
 	for (int i = 0; i < self->uicCount; i++) {
 		if (self->elements[i] == e) {
@@ -329,6 +339,28 @@ void Scene_RemoveUiElement(Scene *self, UiElement *e)
 	}
 
 	Scene_RemoveObject(index, (void **)(self->elements), &(self->uicCount));
+}
+
+void Scene_RemoveAllUiElements(Scene *self)
+{
+	if (!self) {
+		return;
+	}
+
+	for (int i = 0; i < self->uicCount; i++) {
+		ui_element_delete(self->elements[i]);
+		self->elements[i] = NULL;
+	}
+	self->uicCount = 0;
+}
+
+void Scene_SetWaveIndex(Scene *self, int index)
+{
+	if (!self) {
+		return;
+	}
+
+	self->waveIdx = index;
 }
 
 void Scene_RemoveEnemy(Scene *self, int index)

@@ -71,11 +71,16 @@ typedef struct Enemy_s
 	/// \brief Used to know if we have to call enemyRaisedOrDead.
 	bool firstUpdate;
 
+	/// @brief Damages caused by the ship when colliding with the player's one.
+	int collisionDamages;
+
+	//For these funcs, when implemented, only the last argument is guranteed
+	//to be non-null when PatternData::destroy == true.
 	void_enemy_func_ptr update;
 	void_enemy_func_ptr updatePos;
 	void_enemy_func_ptr throwAttack;
-	void_enemy_func_ptr enemyRaisedOrDead;
-	PatternData _data[4]; //Holds additional data for the functions. Do not forget to update the memset size on change.
+	void_enemy_func_ptr enemyRaisedOrDead; //This function guarantees that first argument is non-null.
+	PatternData _data[4];
 } Enemy;
 
 /// @brief Crée un nouvel ennemi.

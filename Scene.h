@@ -15,7 +15,7 @@
 #define ENEMY_CAPACITY 32
 
 // Nombre maximal de projectiles actifs dans un niveau.
-#define BULLET_CAPACITY 256
+#define BULLET_CAPACITY 1024
 
 // Maximum of UI Elements (Components) that the scene can hold.
 #define UIC_CAPACITY 32
@@ -120,8 +120,24 @@ void Scene_AppendEnemy(Scene *self, Enemy *enemy);
 /// @param index l'indice du l'ennemi à supprimer dans le tableau self->enemies.
 void Scene_RemoveEnemy(Scene *self, int index);
 
+/// @brief Add a UI component to the scene.
+/// @param self the scene.
+/// @param e the UI component/element.
 void Scene_AddUiElement(Scene *self, struct UiElement_t *e);
+
+/// @brief Remove a UI component tha you've set.
+/// @brief self the scene.
+/// @brief e the UI component/element to remove.
 void Scene_RemoveUiElement(Scene *self, struct UiElement_t *e);
+
+/// @brief Remove all UI elements of the scene.
+/// @brief self the scene.
+void Scene_RemoveAllUiElements(Scene *self);
+
+/// @brief Change the current level (wave index).
+/// @param self the scene.
+/// @param index the level (wave index).
+void Scene_SetWaveIndex(Scene *scene, int index);
 
 /// @brief Renvoie le moteur de rendu de la scène.
 /// @param self la scène.

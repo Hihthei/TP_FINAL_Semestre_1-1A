@@ -75,7 +75,9 @@ int main(int argc, char *argv[])
 
 	UiElement *button = ui_element_Button_new();
 	button->size = Vec2_Set(4, 3);
+	button->position = Vec2_Set((16-4)/2, (9-3)/2);
 	//((Button *)button)->image = scene.;
+	Scene_AddUiElement(scene, button);
 
 	scene->ui_mode = true;
 	while (true)
@@ -85,6 +87,7 @@ int main(int argc, char *argv[])
 		//printf("%f FPS\n", 60/Timer_GetElapsed(g_time));
 
 		// Met à jour la scène
+
 		bool quitLoop = Scene_Update(scene);
 		if (quitLoop) {
 			no_quit = false;
@@ -110,6 +113,7 @@ load_game:
 	scene->ui_mode = false;
 	Scene_RemoveUiElement(scene, button);
 	Scene_Load(scene);
+	Scene_SetWaveIndex(scene, 0);
 
 	//Show the game if required.
 	if (no_quit) {
@@ -141,12 +145,14 @@ load_game:
 
 		//Clean the scene.
 		Scene_Unload(scene);
+		Scene_RemoveAllUiElements(scene);
 		scene->ui_mode = true;
 
 		//Display new data.
 		button = ui_element_Button_new();
 		button->size = Vec2_Set(4, 3);
-		button->size = Vec2_Set(4, 3);
+		button->position = Vec2_Set((16-4)/2, (9-3)/2);
+		Scene_AddUiElement(scene, button);
 
 		//Change the texture.
 		no_quit = true;

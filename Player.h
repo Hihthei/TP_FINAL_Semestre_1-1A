@@ -75,7 +75,7 @@ void Player_Render(Player *self);
 /// @brief Inflige des dommages au joueur.
 /// @param self le joueur.
 /// @param damage la quantité de dommages (nombre de points de vie à perdre).
-void Player_Damage(Player *self, int damage, void *bullet);
+void Player_Damage(Player *self, int damage, struct Bullet_s *bullet);
 
 /// \brief Player_Ship_Collision
 /// \param self the player

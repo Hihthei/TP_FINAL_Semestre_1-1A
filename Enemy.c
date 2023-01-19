@@ -17,6 +17,7 @@ Enemy *Enemy_New(Scene *scene, int type, Vec2 position)
     self->state = ENEMY_FIRING;
 	self->lifePoints = 20;
 	self->lastAttack = -1;
+	self->collisionDamages = 10;
 
 	self->update = &Enemy_Update_impl;
 	self->updatePos = &Enemy_Update_pos_impl;
@@ -49,10 +50,10 @@ void Enemy_Delete(Enemy *self)
     if (!self) return;
 
 	invalidate_patterns_data(&self->_data[0], 4);
+	self->enemyRaisedOrDead(NULL, &self->_data[3]);
 	self->update(NULL, &self->_data[0]);
 	self->updatePos(NULL, &self->_data[1]);
 	self->throwAttack(NULL, &self->_data[2]);
-	self->enemyRaisedOrDead(NULL, &self->_data[3]);
 
     free(self);
 }
