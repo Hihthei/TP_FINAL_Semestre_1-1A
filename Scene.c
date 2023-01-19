@@ -210,9 +210,6 @@ bool Scene_Update(Scene *self)
 		ui_element_update(self->elements[i], self);
 	}
 
-	// ----------------------------------------------------------------------------
-	// Met à jour les portails
-
 	return (self->ui_mode == true ? self->input->quitPressed
 						  : (self->input->quitPressed || self->player->lifePoints <= 0));
 }

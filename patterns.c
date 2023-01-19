@@ -218,7 +218,7 @@ void enemy_throw_pattern(Enemy *self, PatternData *d)
 		self->lastAttack = 0;
 		Vec2 velocity = Vec2_Set(-2.0f, 0.0f);
 		Bullet *bullet = Bullet_New(self->scene, self->position, velocity, BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES);
-		bullet->updatePos = &bullet_auto_focus_pattern;
+		bullet->updatePos = &bullet_player_auto_focus_pattern;
 		Scene_AppendBullet(self->scene, bullet);
 		mixer_play_music(self->scene->mixer, FighterShotSound, 1);
 	} else {

@@ -22,6 +22,8 @@ enum SoundType
 	/*Channel 5*/
 	CollisionSound,
 	/*Channel 6*/
+	PlayerSpecialShotSound,
+	/*Channel 7*/
 	CrisisSound,
 	NoCrisisSound,
 };

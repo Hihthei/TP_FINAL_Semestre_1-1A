@@ -65,7 +65,7 @@ void mixer_play_music(Mixer *self, int type, int duration)
 		channel = 0;
 	} else {
 		channel -= 3;
-		if (type > 9) {
+		if (type > 10) {
 			channel -= 1;
 		}
 	}
