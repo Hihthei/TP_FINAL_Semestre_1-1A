@@ -22,7 +22,6 @@ typedef enum Pattern_Type
 /// @brief Structure used as persistent storage for pattern functions.
 typedef struct PatternData_t
 {
-	struct Scene_s *scene;
 	void *data;
 	bool destroy;
 } PatternData;
@@ -43,12 +42,6 @@ static inline void void_bullet_func_none(struct Bullet_s *s, PatternData *d) { U
 /// @param size of the array.
 void invalidate_patterns_data(PatternData *d, int size);
 
-/// @brief Set a scene on multiple PatternData objects.
-/// @param d, array of PatternData of given size.
-/// @param size of the array.
-/// @param scene, the scene that you want to set on all the PatternData instances.
-void set_patterns_scene(PatternData *d, int size, struct Scene_s *scene);
-
 /// @brief Get a pattern function from the pattern library.
 /// @param pattern_type type of the pattern you want to get.
 /// @param pattern_id UID of the pattern of the given type.
@@ -56,3 +49,5 @@ func_ptr get_pattern(PatternType pattern_type, unsigned int pattern_id);
 
 //Additional functions to get more features ;)
 void enemy_drops_life(struct Enemy_s *self, PatternData *d);
+
+void bullet_enemy_auto_focus(struct Bullet_s *s, PatternData *d);

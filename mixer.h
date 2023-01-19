@@ -2,24 +2,28 @@
 
 #include "Settings.h"
 
-#define MAX_SOUNDS 6
+#define MAX_SOUNDS 11
 
 enum SoundType
 {
-	Background,
-	Destruction,
-	Apparition,
-	FighterShoot,
-	PlayerShoot,
-	Crisis,
-	Lost
-};
-
-enum SoundSource
-{
-	FighterSource,
-	PlayerSource,
-	OtherSource
+	/*Channel 0*/
+	BackgroundSound,
+	MenuSound,
+	LostSound,
+	WonSound,
+	/*Channel 1*/
+	DestructionSound,
+	/*Channel 2*/
+	ApparitionSound,
+	/*Channel 3*/
+	FighterShotSound,
+	/*Channel 4*/
+	PlayerShotSound,
+	/*Channel 5*/
+	CollisionSound,
+	/*Channel 6*/
+	CrisisSound,
+	NoCrisisSound,
 };
 
 typedef struct Mixer_t
@@ -42,4 +46,4 @@ void mixer_load(Mixer *self);
 void mixer_set_volume(Mixer *self, int soundType, int value);
 
 /// @brief Plays the music you want to!
-void mixer_play_music(Mixer *self, int soundType, int duration, enum SoundSource source);
+void mixer_play_music(Mixer *self, int soundType, int duration);

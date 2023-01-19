@@ -44,11 +44,11 @@ struct ThreeThrows_t
 	bool mid;
 };
 
-void enemy_drops_life(struct Enemy_s *self, PatternData *d)
+void enemy_drops_life(Enemy *self, PatternData *d)
 {
 	if (d->destroy) {
 		//The enemy's dead, generate the power up.
-		Scene_AppendBullet(d->scene, Bullet_New(d->scene, self->position, Vec2_Set(0, 0), BULLET_FIGHTER, 90.0f, -15));
+		Scene_AppendBullet(self->scene, Bullet_New(self->scene, self->position, Vec2_Set(0, 0), BULLET_FIGHTER, 90.0f, -15));
 	}
 }
 
@@ -112,7 +112,7 @@ void enemy_kamikaze_pos_pattern(Enemy *self, PatternData *d)
 		return;
 	}
 
-	Vec2 direction = Vec2_Normalize(Vec2_Sub(d->scene->player->position, self->position));
+	Vec2 direction = Vec2_Normalize(Vec2_Sub(self->scene->player->position, self->position));
 	self->position = Vec2_Add(self->position, Vec2_Scale(direction, 1 * Timer_GetDelta(g_time)));
 }
 
@@ -199,10 +199,10 @@ void bullet_auto_focus_pattern(struct Bullet_s *self, PatternData *d)
 		return;
 	}
 
-	if (self->position.x < d->scene->player->position.x) {
+	if (self->position.x < self->scene->player->position.x) {
 		self->position = Vec2_Add(self->position, Vec2_Scale(self->velocity, Timer_GetDelta(g_time)));
 	} else {
-		self->velocity = Vec2_Scale(Vec2_Normalize(Vec2_Sub(d->scene->player->position, self->position)), Vec2_Length(self->velocity));
+		self->velocity = Vec2_Scale(Vec2_Normalize(Vec2_Sub(self->scene->player->position, self->position)), Vec2_Length(self->velocity));
 		self->position = Vec2_Add(self->position, Vec2_Scale(self->velocity, Timer_GetDelta(g_time)));
 		self->angle = angle_radian_to_degrees(Vec2_AngleBetweenY(self->velocity));
 	}
@@ -220,6 +220,7 @@ void enemy_throw_pattern(Enemy *self, PatternData *d)
 		Bullet *bullet = Bullet_New(self->scene, self->position, velocity, BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES);
 		bullet->updatePos = &bullet_auto_focus_pattern;
 		Scene_AppendBullet(self->scene, bullet);
+		mixer_play_music(self->scene->mixer, FighterShotSound, 1);
 	} else {
 		self->lastAttack += Timer_GetDelta(g_time);
 	}
@@ -248,7 +249,8 @@ void enemy_throw_two_pattern(Enemy *self, PatternData *d)
 		if (as->second > 0.5) {
 			as->state = false;
 			as->second = 0;
-			Scene_AppendBullet(d->scene, Bullet_New(d->scene, self->position, Vec2_Set(-3.0, 0), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
+			Scene_AppendBullet(self->scene, Bullet_New(self->scene, self->position, Vec2_Set(-3.0, 0), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
+			mixer_play_music(self->scene->mixer, FighterShotSound, 1);
 			return;
 		}
 	} else {
@@ -256,7 +258,8 @@ void enemy_throw_two_pattern(Enemy *self, PatternData *d)
 		if (as->first > 2) {
 			as->state = true;
 			as->first = 0;
-			Scene_AppendBullet(d->scene, Bullet_New(d->scene, self->position, Vec2_Set(-3.0, 0), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
+			Scene_AppendBullet(self->scene, Bullet_New(self->scene, self->position, Vec2_Set(-3.0, 0), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
+			mixer_play_music(self->scene->mixer, FighterShotSound, 1);
 			return;
 		}
 	}
@@ -289,8 +292,8 @@ void enemy_throw_three_pattern(Enemy *self, PatternData *d)
 	}
 
 	if (as->mid) {
-		Bullet *bullet = Bullet_New(d->scene, self->position, Vec2_Set(-3, 0), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES);
-		Scene_AppendBullet(d->scene, bullet);
+		Bullet *bullet = Bullet_New(self->scene, self->position, Vec2_Set(-3, 0), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES);
+		Scene_AppendBullet(self->scene, bullet);
 	}
 	if (as->first > 0.2) {
 		as->first = 0;
@@ -299,10 +302,11 @@ void enemy_throw_three_pattern(Enemy *self, PatternData *d)
 			as->a = 0;
 		}
 
-		Bullet *bullet = Bullet_New(d->scene, self->position, Vec2_Rotate(Vec2_Set(-2, 0), as->a), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES);
-		Scene_AppendBullet(d->scene, bullet);
-		bullet = Bullet_New(d->scene, self->position, Vec2_Rotate(Vec2_Set(-2, 0), -as->a), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES);
-		Scene_AppendBullet(d->scene, bullet);
+		Bullet *bullet = Bullet_New(self->scene, self->position, Vec2_Rotate(Vec2_Set(-2, 0), as->a), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES);
+		Scene_AppendBullet(self->scene, bullet);
+		bullet = Bullet_New(self->scene, self->position, Vec2_Rotate(Vec2_Set(-2, 0), -as->a), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES);
+		Scene_AppendBullet(self->scene, bullet);
+		mixer_play_music(self->scene->mixer, FighterShotSound, 1);
 	}
 }
 
@@ -347,9 +351,10 @@ void enemy_throw_mid_three_pattern(Enemy *self, PatternData *d)
 			as->a += 0.1;
 		}
 
-		Scene_AppendBullet(d->scene, Bullet_New(d->scene, self->position, Vec2_Set(-2, 0), BULLET_FIGHTER, 90.0f, 2));
-		Scene_AppendBullet(d->scene, Bullet_New(d->scene, self->position, Vec2_Rotate(Vec2_Set(-2, 0), as->a), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
-		Scene_AppendBullet(d->scene, Bullet_New(d->scene, self->position, Vec2_Rotate(Vec2_Set(-2, 0), -as->a), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
+		Scene_AppendBullet(self->scene, Bullet_New(self->scene, self->position, Vec2_Set(-2, 0), BULLET_FIGHTER, 90.0f, 2));
+		Scene_AppendBullet(self->scene, Bullet_New(self->scene, self->position, Vec2_Rotate(Vec2_Set(-2, 0), as->a), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
+		Scene_AppendBullet(self->scene, Bullet_New(self->scene, self->position, Vec2_Rotate(Vec2_Set(-2, 0), -as->a), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
+		mixer_play_music(self->scene->mixer, FighterShotSound, 1);
 	}
 }
 
@@ -377,18 +382,20 @@ void enemy_throw_hard_pattern(Enemy *self, PatternData *d)
 
 	as->sourceTime += Timer_GetDelta(g_time);
 	if (as->sourceTime > 0.08) {
-		Scene_AppendBullet(d->scene, Bullet_New(d->scene, self->position, as->source, BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
-		Scene_AppendBullet(d->scene, Bullet_New(d->scene, self->position, Vec2_Rotate(as->source, M_PI_2), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
-		Scene_AppendBullet(d->scene, Bullet_New(d->scene, self->position, Vec2_Rotate(as->source, M_PI), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
-		Scene_AppendBullet(d->scene, Bullet_New(d->scene, self->position, Vec2_Rotate(as->source, -M_PI_2), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
+		Scene_AppendBullet(self->scene, Bullet_New(self->scene, self->position, as->source, BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
+		Scene_AppendBullet(self->scene, Bullet_New(self->scene, self->position, Vec2_Rotate(as->source, M_PI_2), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
+		Scene_AppendBullet(self->scene, Bullet_New(self->scene, self->position, Vec2_Rotate(as->source, M_PI), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
+		Scene_AppendBullet(self->scene, Bullet_New(self->scene, self->position, Vec2_Rotate(as->source, -M_PI_2), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
 
-		Scene_AppendBullet(d->scene, Bullet_New(d->scene, self->position, as->source2, BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
-		Scene_AppendBullet(d->scene, Bullet_New(d->scene, self->position, Vec2_Rotate(as->source2, M_PI_2), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
-		Scene_AppendBullet(d->scene, Bullet_New(d->scene, self->position, Vec2_Rotate(as->source2, M_PI), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
-		Scene_AppendBullet(d->scene, Bullet_New(d->scene, self->position, Vec2_Rotate(as->source2, -M_PI_2), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
+		Scene_AppendBullet(self->scene, Bullet_New(self->scene, self->position, as->source2, BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
+		Scene_AppendBullet(self->scene, Bullet_New(self->scene, self->position, Vec2_Rotate(as->source2, M_PI_2), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
+		Scene_AppendBullet(self->scene, Bullet_New(self->scene, self->position, Vec2_Rotate(as->source2, M_PI), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
+		Scene_AppendBullet(self->scene, Bullet_New(self->scene, self->position, Vec2_Rotate(as->source2, -M_PI_2), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
 		as->source = Vec2_Rotate(as->source, 0.5);
 		as->source2 = Vec2_Rotate(as->source2, -0.5);
 		as->sourceTime = 0;
+
+		mixer_play_music(self->scene->mixer, FighterShotSound, 1);
 	}
 }
 
@@ -412,11 +419,24 @@ void enemy_auto_aim_pattern(Enemy *self, PatternData *d)
 	(*as) += Timer_GetDelta(g_time);
 
 	if ((*as) <= 1.0) {
-		Vec2 direction = Vec2_Normalize(Vec2_Sub(d->scene->player->position, self->position));
-		Bullet *bullet = Bullet_New(d->scene, self->position, Vec2_Scale(direction, 3), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES);
-		Scene_AppendBullet(d->scene, bullet);
+		Vec2 direction = Vec2_Normalize(Vec2_Sub(self->scene->player->position, self->position));
+		Bullet *bullet = Bullet_New(self->scene, self->position, Vec2_Scale(direction, 3), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES);
+		Scene_AppendBullet(self->scene, bullet);
+		mixer_play_music(self->scene->mixer, FighterShotSound, 1);
 	} else if ((*as) >= 2) {
 		(*as) = 0;
+	}
+}
+
+void bullet_enemy_auto_focus(struct Bullet_s *s, PatternData *d)
+{
+	if (d->destroy) {
+		return;
+	}
+
+	int min = 0;
+	float minDist;
+	for (int i = 0; i < s->scene->enemyCount; i++) {
 	}
 }
 
@@ -443,15 +463,6 @@ func_ptr pattern_library[5][6] = {
 	{(func_ptr)NULL},
 	{(func_ptr)NULL},
 };
-
-void set_patterns_scene(PatternData *d, int size, struct Scene_s *scene)
-{
-	int i = 0;
-	while (i < size) {
-		d[i].scene = scene;
-		i++;
-	}
-}
 
 void invalidate_patterns_data(PatternData *d, int size)
 {

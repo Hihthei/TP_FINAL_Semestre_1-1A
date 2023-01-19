@@ -25,7 +25,6 @@ Enemy *Enemy_New(Scene *scene, int type, Vec2 position)
 	self->enemyRaisedOrDead = &void_enemy_func_none;
 
 	memset(&self->_data[0], 0, sizeof(PatternData)*4);
-	set_patterns_scene(&self->_data[0], 4, scene);
 
     Assets *assets = Scene_GetAssets(self->scene);
     switch (type)
@@ -55,6 +54,8 @@ void Enemy_Delete(Enemy *self)
 	self->updatePos(NULL, &self->_data[1]);
 	self->throwAttack(NULL, &self->_data[2]);
 
+	mixer_play_music(self->scene->mixer, DestructionSound, 1);
+
     free(self);
 }
 
@@ -69,10 +70,6 @@ void Enemy_Update_impl(Enemy *self, PatternData *d)
 {
 	if (d->destroy) {
 		return;
-	}
-	if (self->firstUpdate) {
-		self->firstUpdate = false;
-		self->enemyRaisedOrDead(self, &self->_data[3]);
 	}
 
 	self->updatePos(self, &self->_data[1]);
@@ -95,22 +92,25 @@ bool Enemy_Should_Throw_Attack_impl(Enemy *self, PatternData *d)
 
 void Enemy_Update(Enemy *self)
 {
+	if (self->firstUpdate) {
+		mixer_play_music(self->scene->mixer, ApparitionSound, 1);
+		self->firstUpdate = false;
+		self->enemyRaisedOrDead(self, &self->_data[3]);
+	}
 	self->update(self, &self->_data[0]);
 }
 
 void Enemy_Render(Enemy *self)
 {
 	// On récupère des infos essentielles (communes à tout objet)
-	Scene *scene = self->scene;
-	SDL_Renderer *renderer = Scene_GetRenderer(scene);
-	Camera *camera = Scene_GetCamera(scene);
+	SDL_Renderer *renderer = Scene_GetRenderer(self->scene);
+	Camera *camera = Scene_GetCamera(self->scene);
 	// On calcule la position en pixels en fonction de la position
 	// en tuiles, la taille de la fenêtre et la taille des textures.
 	float scale = Camera_GetWorldToViewScale(camera);
 	SDL_FRect dst = { 0 };
 	// Changez 48 par une autre valeur pour grossir ou réduire l'objet
-	dst.h = 48 * PIX_TO_WORLD * scale;
-	dst.w = 48 * PIX_TO_WORLD * scale;
+	dst.h = dst.w = scale;
 	Camera_WorldToView(camera, self->position, &dst.x, &dst.y);
 	// Le point de référence est le centre de l'objet
 	dst.x -= 0.50f * dst.w;
@@ -124,6 +124,6 @@ void Enemy_Damage(Enemy *self, int damage)
 	self->lifePoints -= damage;
 	if (self->lifePoints <= 0) {
 		self->state = ENEMY_DEAD;
-		// [TODO] Change to the right sprite.
+		mixer_play_music(self->scene->mixer, DestructionSound, 1);
 	}
 }

@@ -22,7 +22,6 @@ Bullet *Bullet_New(Scene *scene, Vec2 position, Vec2 velocity, int type, float a
 	self->updatePos = &Bullet_Update_pos_impl;
 
 	memset(&self->_data[0], 0, sizeof(PatternData)*2);
-	set_patterns_scene(&self->_data[0], 2, scene);
 
 	Assets *assets = Scene_GetAssets(scene);
 

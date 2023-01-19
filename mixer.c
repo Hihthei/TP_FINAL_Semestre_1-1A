@@ -24,14 +24,24 @@ void mixer_delete(Mixer *self)
 	free(self);
 }
 
+struct SoundSet_t
+{
+	enum SoundType type;
+	const char *path;
+};
+
 void mixer_load(Mixer *self)
 {
-	const char *sources[] = {
+	struct SoundSet_t sources[] = {
+		{BackgroundSound, "../Assets/Music/background.wav"}
 	};
 
-	int length = sizeof(sources)/sizeof(const char *);
+	int length = sizeof(sources)/sizeof(struct SoundSet_t);
 	for (int i = 0; i < length && i < MAX_SOUNDS; i++) {
-		self->sounds[i] = Mix_LoadWAV(sources[i]);
+		Mix_Chunk *chk = Mix_LoadWAV(sources[i].path);
+		if (chk) {
+			self->sounds[sources[i].type] = chk;
+		}
 	}
 }
 
@@ -44,24 +54,21 @@ void mixer_set_volume(Mixer *self, int type, int val)
 	Mix_Volume(type, val);
 }
 
-void mixer_play_music(Mixer *self, int type, int duration, enum SoundSource src)
+void mixer_play_music(Mixer *self, int type, int duration)
 {
-	if (!self || type < 0 || type > MAX_SOUNDS) {
+	if (!self || type < 0 || type > MAX_SOUNDS || !self->sounds[type]) {
 		return;
 	}
 
-	switch (src) {
-	case FighterSource:
-		Mix_PlayChannel(type, self->sounds[type], duration);
-		break;
-	case PlayerSource:
-		Mix_PlayChannel(type, self->sounds[type], duration);
-		break;
-	case OtherSource:
-		Mix_PlayChannel(type, self->sounds[type], duration);
-		break;
-	default:
-		break;
+	int channel = type;
+	if (type < 4) { //Because menu and background sound have to be on the same channel.
+		channel = 0;
+	} else {
+		channel -= 3;
+		if (type > 9) {
+			channel -= 1;
+		}
 	}
 
+	Mix_PlayChannel(channel, self->sounds[type], duration);
 }

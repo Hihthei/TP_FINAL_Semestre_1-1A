@@ -70,6 +70,9 @@ int main(int argc, char *argv[])
 	scene->waves[6] = &craft_level_4_5;
 	scene->waves[7] = &craft_level_4_boss;
 
+	//Play the background music.
+	mixer_play_music(scene->mixer, MenuSound, -1);
+
 	bool no_quit = true;
 	//Show the menu.
 
@@ -115,6 +118,7 @@ load_game:
 	Scene_RemoveUiElement(scene, button);
 	Scene_Load(scene);
 	Scene_SetWaveIndex(scene, 0);
+	mixer_play_music(scene->mixer, BackgroundSound, -1);
 
 	//Show the game if required.
 	if (no_quit) {
@@ -145,22 +149,26 @@ load_game:
 		}
 
 		//Clean the scene.
+		int playerState = scene->player->state;
 		Scene_Unload(scene);
 		Scene_RemoveAllUiElements(scene);
 		scene->ui_mode = true;
 
 		//Display new data.
 		button = ui_element_BlinkingButton_new();
-		button->size = Vec2_Set(4, 3);
-		button->position = Vec2_Set((16-4)/2, (9-3)/2);
+		button->size = Vec2_Set(9, 16);
+		button->position = Vec2_Set(0, 0);
 		Scene_AddUiElement(scene, button);
 
 		//Change the texture.
 		no_quit = true;
-		if (scene->player->state == PLAYER_DEAD) {
-			//((Button *)button)->image = scene.;
+		if (playerState == PLAYER_DEAD) {
+			((Button *)button)->image = scene->assets->lostScreen;
+			((BlinkingButton *)button)->blinking = scene->assets->lostScreenMessage;
+			mixer_play_music(scene->mixer, LostSound, -1);
 		} else {
 			//((Button *)button)->image = scene.;
+			mixer_play_music(scene->mixer, WonSound, -1);
 		}
 
 		while (true)

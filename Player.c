@@ -26,7 +26,6 @@ Player *Player_New(Scene *scene)
 	self->playerCollision = &nofunc;
 
 	memset(&self->_data[0], 0, sizeof(PatternData)*2);
-	set_patterns_scene(&self->_data[0], 2, scene);
 
     return self;
 }
@@ -49,8 +48,7 @@ void Player_Update_pos_impl(Player *self, PatternData *d)
 	}
 
 	// On récupère des infos essentielles (communes à tout objet)
-	Scene *scene = self->scene;
-	Input *input = Scene_GetInput(scene);
+	Input *input = Scene_GetInput(self->scene);
 	// Mise à jour de la vitesse en fonction de l'état des touches
 	Vec2 velocity = Vec2_Scale(Vec2_Set(input->hAxis, input->vAxis), 2);
 	// Mise à jour de la position
@@ -77,8 +75,7 @@ void Player_Update_impl(Player *self, PatternData *d)
 	}
 
 	// On récupère des infos essentielles (communes à tout objet)
-	Scene *scene = self->scene;
-	Input *input = Scene_GetInput(scene);
+	Input *input = Scene_GetInput(self->scene);
 	self->lastAttack += Timer_GetDelta(g_time);
 
 	self->updatePos(self, &self->_data[1]);
@@ -86,9 +83,9 @@ void Player_Update_impl(Player *self, PatternData *d)
 	if (input->shootPressed) {
 		//Don't let 'em spam it all!
 		if (self->lastAttack == -1 || self->lastAttack > 0.3) {
-			Vec2 velocity = Vec2_Set(4.0f, 0.0f);
-			Bullet *bullet = Bullet_New(self->scene, self->position, velocity, BULLET_PLAYER, 90.0f, 1);
+			Bullet *bullet = Bullet_New(self->scene, self->position, Vec2_Set(4.0f, 0.0f), BULLET_PLAYER, 90.0f, 1);
 			Scene_AppendBullet(self->scene, bullet);
+			mixer_play_music(self->scene->mixer, PlayerShotSound, 1);
 			self->lastAttack = 0;
 		}
 	}
@@ -102,17 +99,15 @@ void Player_Update(Player *self)
 void Player_Render(Player *self)
 {
 	// On récupère des infos essentielles (communes à tout objet)
-	Scene *scene = self->scene;
-	SDL_Renderer *renderer = Scene_GetRenderer(scene);
-	//Assets *assets = Scene_GetAssets(scene);
-	Camera *camera = Scene_GetCamera(scene);
+	SDL_Renderer *renderer = Scene_GetRenderer(self->scene);
+	Camera *camera = Scene_GetCamera(self->scene);
 	// On calcule la position en pixels en fonction de la position
 	// en tuiles, la taille de la fenêtre et la taille des textures.
 	float scale = Camera_GetWorldToViewScale(camera);
 	SDL_FRect dst = { 0 };
 	// Changez 48 par une autre valeur pour grossir ou réduire l'objet
-	dst.h = 48 * PIX_TO_WORLD * scale;
-	dst.w = 48 * PIX_TO_WORLD * scale;
+	dst.h = scale;
+	dst.w = scale;
 	Camera_WorldToView(camera, self->position, &dst.x, &dst.y);
 	// Le point de référence est le centre de l'objet
 	dst.x -= 0.50f * dst.w;
@@ -127,11 +122,18 @@ void Player_Damage(Player *self, int damage, Bullet *bullet)
 	UNUSED(bullet);
 
 	self->lifePoints -= damage;
-	if (self->lifePoints <= 20) {
+	if (self->lifePoints > 20) {
+		if (self->state != PLAYER_FLYING) {
+			mixer_play_music(self->scene->mixer, NoCrisisSound, -1);
+			self->state = PLAYER_FLYING;
+		}
+	} else {
 		self->state = PLAYER_DYING;
+		mixer_play_music(self->scene->mixer, CrisisSound, -1);
 	}
 	if (self->lifePoints <= 0) {
 		self->state = PLAYER_DEAD;
+		mixer_play_music(self->scene->mixer, DestructionSound, 1);
 		self->playerDead();
 	}
 }
@@ -142,4 +144,5 @@ void Player_Ship_Collision(Player *self, Enemy *e)
 	Enemy_Damage(e, 30);
 	Player_Damage(self, e->collisionDamages, NULL);
 	self->playerCollision();
+	mixer_play_music(self->scene->mixer, CollisionSound, 1);
 }

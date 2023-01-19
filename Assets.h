@@ -5,6 +5,7 @@
 #define ANIM_TEXTURES_MAX 8
 #define SCENE_ANIM_NUM_MAX 16
 
+
 typedef struct TextureSpec_s
 {
 	SDL_Texture **ptr;
@@ -36,6 +37,18 @@ typedef struct Assets_s
 
     /// @brief Texture du tir d'un ennemi.
     SDL_Texture *fighterBullet;
+
+	/// @brief Background of the start menu.
+	SDL_Texture *startScreen;
+
+	/// @brief Blinking message on the start screen.
+	SDL_Texture *startScreenMessage;
+
+	/// @brief Background of the loser's menu.
+	SDL_Texture *lostScreen;
+
+	/// @brief Blinking message on the loser's screen.
+	SDL_Texture *lostScreenMessage;
 
 	///@brief Total anims available in the assets.
 	Animation *animations[SCENE_ANIM_NUM_MAX];
