@@ -167,8 +167,8 @@ load_game:
 			((BlinkingButton *)button)->blinking = scene->assets->lostScreenMessage;
 			mixer_play_music(scene->mixer, LostSound, -1);
 		} else {
-			((Button *)button)->image = scene->assets->wonScreen;
-			((BlinkingButton *)button)->blinking = scene->assets->wonScreenMessage;
+			((Button*)button)->image = scene->assets->wonScreen;
+			((BlinkingButton*)button)->blinking = scene->assets->wonScreenMessage;
 			mixer_play_music(scene->mixer, WonSound, -1);
 		}
 

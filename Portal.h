@@ -5,6 +5,16 @@
 
 typedef struct Scene_s Scene;
 
+typedef enum PortalType_e
+{
+    /// @brief Portail rouge
+    RED_PORTAL,
+
+    /// @brief Portail bleu
+    BLUE_PORTAL,
+
+} PortalType;
+
 //création d'un objet protail
 
 typedef struct Portal_s
@@ -37,3 +47,11 @@ typedef struct Portal_s
     struct Portal_s* linked_portal;
 
 }Portal;
+
+/// @brief Créer un portail et l'ajoute à la scène via la méthode Scene_AppendBullet();
+/// @param scene la scène.
+/// @param type le type du projectile.
+/// @param lindek le portail auquel il est lié
+/// @param position la position de départ du portail exprimée dans le référentiel monde.
+/// @return Le projectile créé.
+Portal* Portal_New(Scene* scene, int type, void* linked, Vec2 position);

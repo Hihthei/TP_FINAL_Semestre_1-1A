@@ -1,4 +1,5 @@
 #include "levels.h"
+#include "Assets.h"
 
 void craft_level_1(Scene *self)
 {
@@ -11,6 +12,21 @@ void craft_level_1(Scene *self)
 
 void craft_level_1_boss(Scene *self)
 {
+	//création des portails
+	Portal* portal_1_1 = Portal_New(self, BLUE_PORTAL, NULL, Vec2_Set(6.0f, 6.0f));
+	Portal* portal_1_2 = Portal_New(self, BLUE_PORTAL, portal_1_1, Vec2_Set(15.0f, 2.0f));
+	portal_1_1->linked_portal = portal_1_2;
+	Scene_AppendPortal(self, portal_1_1);
+	Scene_AppendPortal(self, portal_1_2);
+
+	Portal* portal_2_1 = Portal_New(self, RED_PORTAL, NULL, Vec2_Set(5.0f, 1.0f));
+	Portal* portal_2_2 = Portal_New(self, RED_PORTAL, portal_2_1, Vec2_Set(14.5f, 8.0f));
+	portal_1_1->linked_portal = portal_2_2;
+	Scene_AppendPortal(self, portal_2_1);
+	Scene_AppendPortal(self, portal_2_2);
+
+	//--------------------------------------------------------------------------
+	//création d'enemies
 	Enemy *enemy = Enemy_New(self, ENEMY_FIGHTER, Vec2_Set(15.0f, 0.5f));
 	enemy->updatePos = get_pattern(PATTERN_ENEMY_MOVE, 2);
 	enemy->throwAttack = get_pattern(PATTERN_ENEMY_THROW, 1);
