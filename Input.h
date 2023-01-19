@@ -5,6 +5,9 @@
 /// @brief Structure représentant un gestionnaire des entrées utilisateur.
 typedef struct Input_s
 {
+	/// @brief Booléen indiquant si le bouton "Attaque Spéciale" vient d'être pressé.
+	bool specialPressed;
+
     /// @brief Booléen indiquant si le bouton "quitter" vient d'être pressé.
     bool quitPressed;
 
@@ -27,11 +30,11 @@ typedef struct Input_s
     /// Une valeur positive désigne un déplacement vers le haut.
     float vAxis;
 
+	//Informations about the mouse pos.
 	bool mousePress;
 	bool mouseRelease;
 	int mouseX;
 	int mouseY;
-
 } Input;
 
 /// @brief Crée un nouveau gestionnaire des entrées utilisateur.

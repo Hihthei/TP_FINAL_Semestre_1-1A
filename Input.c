@@ -65,6 +65,9 @@ void Input_Update(Input *self)
 				self->shootPressed = true;
 				break;
 
+			case SDL_SCANCODE_S:
+				self->specialPressed = true;
+
             default:
                 break;
             }
@@ -105,6 +108,11 @@ void Input_Update(Input *self)
 					self->shootPressed = false;
 				}
 				break;
+
+			case SDL_SCANCODE_S:
+				if (self->specialPressed) {
+					self->specialPressed = false;
+				}
 
             default:
                 break;

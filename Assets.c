@@ -30,6 +30,10 @@ void Assets_Load(Assets *self, SDL_Renderer *renderer)
 		{ &self->playerBullet,  "../Assets/Player/bullet_default.png" },
 		{ &self->fighter,       "../Assets/Enemy/fighter.png"         },
 		{ &self->fighterBullet, "../Assets/Enemy/fighter_bullet.png"  },
+		{ &self->startScreen,   "../Assets/Background/open_screen.png"},
+		{ &self->startScreenMessage, "../Assets/Background/texte_open_screen.png"},
+		{ &self->lostScreen,    "../Assets/Background/dead_screen.png"},
+		{ &self->lostScreenMessage, "../Assets/Background/texte_dead_screen.png"},
 	};
 	int texSpecCount = sizeof(texSpecs) / sizeof(TextureSpec);
 
@@ -87,6 +91,10 @@ void Assets_Delete(Assets *self)
         &self->fighter,
         &self->fighterBullet,
 		&self->player,
+		&self->startScreen,
+		&self->startScreenMessage,
+		&self->lostScreen,
+		&self->lostScreenMessage,
     };
     int count = sizeof(texPointers) / sizeof(SDL_Texture **);
 

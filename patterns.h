@@ -50,4 +50,4 @@ func_ptr get_pattern(PatternType pattern_type, unsigned int pattern_id);
 //Additional functions to get more features ;)
 void enemy_drops_life(struct Enemy_s *self, PatternData *d);
 
-void bullet_enemy_auto_focus(struct Bullet_s *s, PatternData *d);
+void bullet_enemy_auto_focus_pattern(struct Bullet_s *s, PatternData *d);

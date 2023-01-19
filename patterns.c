@@ -193,7 +193,7 @@ void bullet_slow_pattern(struct Bullet_s *self, PatternData *d)
 	self->position = Vec2_Add(self->position, Vec2_Set(absf(cos(as->sourceTime)), 0));
 }
 
-void bullet_auto_focus_pattern(struct Bullet_s *self, PatternData *d)
+void bullet_player_auto_focus_pattern(struct Bullet_s *self, PatternData *d)
 {
 	if (d->destroy) {
 		return;
@@ -428,22 +428,35 @@ void enemy_auto_aim_pattern(Enemy *self, PatternData *d)
 	}
 }
 
-void bullet_enemy_auto_focus(struct Bullet_s *s, PatternData *d)
+void bullet_enemy_auto_focus_pattern(struct Bullet_s *self, PatternData *d)
 {
 	if (d->destroy) {
 		return;
 	}
 
-	int min = 0;
-	float minDist;
-	for (int i = 0; i < s->scene->enemyCount; i++) {
+	if (self->scene->enemyCount == 0) {
+		self->position = Vec2_Add(self->position, Vec2_Scale(self->velocity, Timer_GetDelta(g_time)));
 	}
+
+	int min = 0;
+	float minDist = Vec2_Distance(self->position, self->scene->enemies[0]->position);
+	for (int i = 1; i < self->scene->enemyCount; i++) {
+		float dist = Vec2_Distance(self->position, self->scene->enemies[i]->position);
+		if (dist < minDist) {
+			minDist = dist;
+			min = i;
+		}
+	}
+
+	self->velocity = Vec2_Scale(Vec2_Normalize(Vec2_Sub(self->scene->enemies[min]->position, self->position)), Vec2_Length(self->velocity));
+	self->position = Vec2_Add(self->position, Vec2_Scale(self->velocity, Timer_GetDelta(g_time)));
+	self->angle = angle_radian_to_degrees(Vec2_AngleBetweenY(self->velocity));
 }
 
 func_ptr pattern_library[5][6] = {
 	/*PATTERN_BULLET_MOVE*/{
 		(func_ptr)&bullet_random_pattern,
-		(func_ptr)&bullet_auto_focus_pattern,
+		(func_ptr)&bullet_player_auto_focus_pattern,
 		(func_ptr)&bullet_slow_pattern,
 		(func_ptr)&bullet_spiral_pattern
 	},

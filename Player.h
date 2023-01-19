@@ -44,6 +44,9 @@ typedef struct Player_s
 	/// \brief Last time the user has raised an attack.
 	float lastAttack;
 
+	/// \brief Last time the user has raised a special attack.
+	float lastSpecialAttack;
+
 	/// \brief Remaining life
 	int lifePoints;
 

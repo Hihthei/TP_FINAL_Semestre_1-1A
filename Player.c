@@ -18,6 +18,7 @@ Player *Player_New(Scene *scene)
     self->radius = 0.25f;
 	self->texture = assets->player;
 	self->lastAttack = -1;
+	self->lastSpecialAttack = -1;
 	self->lifePoints = 100;
 
 	self->update = &Player_Update_impl;
@@ -77,16 +78,26 @@ void Player_Update_impl(Player *self, PatternData *d)
 	// On récupère des infos essentielles (communes à tout objet)
 	Input *input = Scene_GetInput(self->scene);
 	self->lastAttack += Timer_GetDelta(g_time);
+	self->lastSpecialAttack += Timer_GetDelta(g_time);
 
 	self->updatePos(self, &self->_data[1]);
 
+	//Don't let 'em spam it all!
 	if (input->shootPressed) {
-		//Don't let 'em spam it all!
 		if (self->lastAttack == -1 || self->lastAttack > 0.3) {
 			Bullet *bullet = Bullet_New(self->scene, self->position, Vec2_Set(4.0f, 0.0f), BULLET_PLAYER, 90.0f, 1);
 			Scene_AppendBullet(self->scene, bullet);
 			mixer_play_music(self->scene->mixer, PlayerShotSound, 1);
 			self->lastAttack = 0;
+		}
+	}
+	if (input->specialPressed) {
+		if (self->lastAttack == -1 || self->lastAttack > 3) {
+			Bullet *bullet = Bullet_New(self->scene, self->position, Vec2_Set(4.0f, 0.0f), BULLET_PLAYER, 90.0f, 1);
+			bullet->updatePos = &bullet_enemy_auto_focus_pattern;
+			Scene_AppendBullet(self->scene, bullet);
+			mixer_play_music(self->scene->mixer, PlayerShotSound, 1);
+			self->lastSpecialAttack = 0;
 		}
 	}
 }
