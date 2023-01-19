@@ -26,28 +26,37 @@ Bullet *Bullet_New(Scene *scene, Vec2 position, Vec2 velocity, int type, float a
 
 	Assets *assets = Scene_GetAssets(scene);
 
+	self->worldW = 8 * PIX_TO_WORLD;
+	self->worldH = 16 * PIX_TO_WORLD;
+
 	//fighter_bullet.png
     switch (type)
     {
     case BULLET_FIGHTER:
-        self->texture = assets->fighterBullet;
-        self->worldW = 8 * PIX_TO_WORLD;
-        self->worldH = 16 * PIX_TO_WORLD;
+		self->texture = assets->fighterBullet;
         self->radius = 0.05f;
         self->fromPlayer = false;
         break;
-
+	case BULLET_EXPLOSION:
+		self->texture = scene->assets->explosion;
+		self->radius = 0.02f;
+		self->fromPlayer = false;
     default:
     case BULLET_PLAYER:
-        self->texture = assets->playerBullet;
-        self->worldW = 8 * PIX_TO_WORLD;
-        self->worldH = 16 * PIX_TO_WORLD;
+		self->texture = assets->playerBullet;
         self->radius = 0.05f;
         self->fromPlayer = true;
         break;
     }
 
     return self;
+}
+
+Bullet *Explosion_New(Scene *scene, Vec2 position)
+{
+	Bullet *exp = Bullet_New(scene, position, Vec2_Zero, BULLET_EXPLOSION, 0, 0);
+	exp->updatePos = &bullet_auto_depop_pattern;
+	return exp;
 }
 
 void Bullet_Delete(Bullet *self)

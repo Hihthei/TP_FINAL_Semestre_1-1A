@@ -22,6 +22,25 @@
 #define NORMAL_DAMAGES 2
 #define BOSS_DAMAGES 5
 
+
+	/*
+	 * [SECTION] Helper structures and functions for the pattern functions
+	 */
+
+
+float absf(float f)
+{
+	if (f < 0) {
+		return -f;
+	}
+	return f;
+}
+
+struct SlowData_t
+{
+	float sourceTime;
+};
+
 struct SpiralData_t
 {
 	float sourceTime;
@@ -44,13 +63,11 @@ struct ThreeThrows_t
 	bool mid;
 };
 
-void enemy_drops_life(Enemy *self, PatternData *d)
-{
-	if (d->destroy) {
-		//The enemy's dead, generate the power up.
-		Scene_AppendBullet(self->scene, Bullet_New(self->scene, self->position, Vec2_Set(0, 0), BULLET_FIGHTER, 90.0f, -15));
-	}
-}
+
+	/*
+	 * [SECTION] Enemy position patterns
+	 */
+
 
 void enemy_update_pos_pattern(Enemy *self, PatternData *d)
 {
@@ -116,6 +133,12 @@ void enemy_kamikaze_pos_pattern(Enemy *self, PatternData *d)
 	self->position = Vec2_Add(self->position, Vec2_Scale(direction, 1 * Timer_GetDelta(g_time)));
 }
 
+
+	/*
+	 * [SECTION] Bullet patterns
+	 */
+
+
 void bullet_spiral_pattern(struct Bullet_s *self, PatternData *d)
 {
 	if (d->destroy) {
@@ -158,20 +181,6 @@ void bullet_random_pattern(struct Bullet_s *self, PatternData *d)
 							 );
 }
 
-
-struct SlowData_t
-{
-	float sourceTime;
-};
-
-float absf(float f)
-{
-	if (f < 0) {
-		return -f;
-	}
-	return f;
-}
-
 void bullet_slow_pattern(struct Bullet_s *self, PatternData *d)
 {
 	if (d->destroy) {
@@ -207,6 +216,12 @@ void bullet_player_auto_focus_pattern(struct Bullet_s *self, PatternData *d)
 		self->angle = angle_radian_to_degrees(Vec2_AngleBetweenY(self->velocity));
 	}
 }
+
+
+	/*
+	 * [SECTION] Enemy's bullet sending pattern.
+	 */
+
 
 void enemy_throw_pattern(Enemy *self, PatternData *d)
 {
@@ -451,6 +466,41 @@ void bullet_enemy_auto_focus_pattern(struct Bullet_s *self, PatternData *d)
 	self->velocity = Vec2_Scale(Vec2_Normalize(Vec2_Sub(self->scene->enemies[min]->position, self->position)), Vec2_Length(self->velocity));
 	self->position = Vec2_Add(self->position, Vec2_Scale(self->velocity, Timer_GetDelta(g_time)));
 	self->angle = angle_radian_to_degrees(Vec2_AngleBetweenY(self->velocity));
+}
+
+void enemy_drops_life(Enemy *self, PatternData *d)
+{
+	if (d->destroy) {
+		//The enemy's dead, generate the power up.
+		Bullet *bullet = Bullet_New(self->scene, self->position, Vec2_Set(0, 0), BULLET_FIGHTER, 90.0f, -15);
+		bullet->texture = self->scene->assets->healDrop;
+		Scene_AppendBullet(self->scene, bullet);
+	}
+}
+
+void bullet_auto_depop_pattern(struct Bullet_s *self, PatternData *d)
+{
+	if (d->destroy) {
+		if (d->data) {
+			free(d->data);
+		}
+		return;
+	}
+
+	float *as = (float *)d->data;
+
+	if (!as) {
+		d->data = malloc(sizeof(float));
+		as = (float *)d->data;
+		(*as) = 0;
+	}
+
+	(*as) += Timer_GetDelta(g_time);
+
+	if ((*as) >= 0.5) {
+		//This way, the bullet will be out of bounds and will be automatically deleted.
+		self->position = Vec2_Set(-1, -1);
+	}
 }
 
 func_ptr pattern_library[5][6] = {

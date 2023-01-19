@@ -130,20 +130,19 @@ void Player_Damage(Player *self, int damage, Bullet *bullet)
 {
 	UNUSED(bullet);
 
-	self->lifePoints -= damage;
+	self->lifePoints = self->lifePoints - damage;
 	if (self->lifePoints > 20) {
 		if (self->state != PLAYER_FLYING) {
 			mixer_play_music(self->scene->mixer, NoCrisisSound, -1);
 			self->state = PLAYER_FLYING;
 		}
+	} else if (self->lifePoints <= 0) {
+			self->state = PLAYER_DEAD;
+			mixer_play_music(self->scene->mixer, DestructionSound, 1);
+			self->playerDead();
 	} else {
 		self->state = PLAYER_DYING;
 		mixer_play_music(self->scene->mixer, CrisisSound, -1);
-	}
-	if (self->lifePoints <= 0) {
-		self->state = PLAYER_DEAD;
-		mixer_play_music(self->scene->mixer, DestructionSound, 1);
-		self->playerDead();
 	}
 }
 
