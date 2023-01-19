@@ -52,4 +52,4 @@ void enemy_drops_life(struct Enemy_s *self, PatternData *d);
 
 void bullet_enemy_auto_focus_pattern(struct Bullet_s *s, PatternData *d);
 
-void bullet_auto_depop_pattern(struct Bullet_s *s, PatternData *d);
+void bullet_auto_depop_pattern(struct Bullet_s* s, PatternData* d);
