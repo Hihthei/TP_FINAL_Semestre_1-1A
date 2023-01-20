@@ -11,6 +11,20 @@ Assets *Assets_New()
 	self->playerBullet = NULL;
 	self->fighter = NULL;
 	self->fighterBullet = NULL;
+	self->startScreen = NULL;
+	self->startScreenMessage = NULL;
+	self->lostScreen = NULL;
+	self->lostScreenMessage = NULL;
+	self->wonScreen = NULL;
+	self->wonScreenMessage = NULL;
+	self->healDrop = NULL;
+	self->playerSpecialBullet = NULL;
+	self->explosion = NULL;
+	self->boss = NULL;
+	self->superBoss = NULL;
+	self->fighterAttack2 = NULL;
+	self->fighter2 = NULL;
+	self->fighterSpecial = NULL;
 
 	memset(&self->animations[0], 0, sizeof(Animation *)*SCENE_ANIM_NUM_MAX);
 	memset(&self->animationsToLoad[0], 0, sizeof(TextureSpec)*SCENE_ANIM_NUM_MAX*8);
@@ -24,8 +38,8 @@ void Assets_Load(Assets *self, SDL_Renderer *renderer)
 	// Chargement des textures
 
 	TextureSpec texSpecs[] = {
-		{ &self->layers[0],     "../Assets/Background/layer_01.png"   },
-		{ &self->layers[1],     "../Assets/Background/layer_02.png"   },
+		{ &self->layers[0],     "../Assets/Background/game_bg.jpg"   },
+		{ &self->layers[1],     "../Assets/Background/game_bg.jpg"   },
 		{ &self->player,		"../Assets/Player/player.png"		  },
 		{ &self->playerBullet,  "../Assets/Player/bullet_default.png" },
 		{ &self->fighter,       "../Assets/Enemy/fighter.png"         },
@@ -34,6 +48,8 @@ void Assets_Load(Assets *self, SDL_Renderer *renderer)
 		{ &self->startScreenMessage, "../Assets/Background/texte_open_screen.png"},
 		{ &self->lostScreen,    "../Assets/Background/dead_screen.png"},
 		{ &self->lostScreenMessage, "../Assets/Background/texte_dead_screen.png"},
+		{ &self->wonScreen,    "../Assets/Background/win_screen.png"},
+		{ &self->wonScreenMessage, "../Assets/Background/text_win_screen.png"},
 		{ &self->healDrop, "../Assets/Enemy/fighter_bullet_health.png"},
 		{ &self->playerSpecialBullet, "../Assets/Player/bullet_special.png"},
 		{ &self->explosion, "../Assets/explosion.png"},
@@ -98,6 +114,16 @@ void Assets_Delete(Assets *self)
 		&self->startScreenMessage,
 		&self->lostScreen,
 		&self->lostScreenMessage,
+		&self->wonScreen,
+		&self->wonScreenMessage,
+		&self->healDrop,
+		&self->playerSpecialBullet,
+		&self->explosion,
+		&self->boss,
+		&self->superBoss,
+		&self->fighterAttack2,
+		&self->fighter2,
+		&self->fighterSpecial,
     };
     int count = sizeof(texPointers) / sizeof(SDL_Texture **);
 

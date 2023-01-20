@@ -307,7 +307,8 @@ void enemy_throw_three_pattern(Enemy *self, PatternData *d)
 	}
 
 	if (as->mid) {
-		Bullet *bullet = Bullet_New(self->scene, self->position, Vec2_Set(-3, 0), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES);
+		Bullet *bullet = Bullet_New(self->scene, self->position, Vec2_Set(-3, 0), BULLET_FIGHTER, 90.0f, BOSS_DAMAGES);
+		bullet->texture = self->scene->assets->fighterAttack2;
 		Scene_AppendBullet(self->scene, bullet);
 	}
 	if (as->first > 0.2) {
@@ -366,7 +367,9 @@ void enemy_throw_mid_three_pattern(Enemy *self, PatternData *d)
 			as->a += 0.1;
 		}
 
-		Scene_AppendBullet(self->scene, Bullet_New(self->scene, self->position, Vec2_Set(-2, 0), BULLET_FIGHTER, 90.0f, 2));
+		Bullet *bullet = Bullet_New(self->scene, self->position, Vec2_Set(-2, 0), BULLET_FIGHTER, 90.0f, 2);
+		bullet->texture = self->scene->assets->fighterAttack2;
+		Scene_AppendBullet(self->scene, bullet);
 		Scene_AppendBullet(self->scene, Bullet_New(self->scene, self->position, Vec2_Rotate(Vec2_Set(-2, 0), as->a), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
 		Scene_AppendBullet(self->scene, Bullet_New(self->scene, self->position, Vec2_Rotate(Vec2_Set(-2, 0), -as->a), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
 		mixer_play_music(self->scene->mixer, FighterShotSound, 1);
@@ -397,15 +400,31 @@ void enemy_throw_hard_pattern(Enemy *self, PatternData *d)
 
 	as->sourceTime += Timer_GetDelta(g_time);
 	if (as->sourceTime > 0.08) {
-		Scene_AppendBullet(self->scene, Bullet_New(self->scene, self->position, as->source, BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
-		Scene_AppendBullet(self->scene, Bullet_New(self->scene, self->position, Vec2_Rotate(as->source, M_PI_2), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
-		Scene_AppendBullet(self->scene, Bullet_New(self->scene, self->position, Vec2_Rotate(as->source, M_PI), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
-		Scene_AppendBullet(self->scene, Bullet_New(self->scene, self->position, Vec2_Rotate(as->source, -M_PI_2), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
+		Bullet *bullet = Bullet_New(self->scene, self->position, as->source, BULLET_FIGHTER, 90.0f, BOSS_DAMAGES);
+		bullet->texture = self->scene->assets->fighterSpecial;
+		Scene_AppendBullet(self->scene, bullet);
+		bullet = Bullet_New(self->scene, self->position, Vec2_Rotate(as->source, M_PI_2), BULLET_FIGHTER, 90.0f, BOSS_DAMAGES);
+		bullet->texture = self->scene->assets->fighterSpecial;
+		Scene_AppendBullet(self->scene, bullet);
+		bullet = Bullet_New(self->scene, self->position, Vec2_Rotate(as->source, M_PI), BULLET_FIGHTER, 90.0f, BOSS_DAMAGES);
+		bullet->texture = self->scene->assets->fighterSpecial;
+		Scene_AppendBullet(self->scene, bullet);
+		bullet = Bullet_New(self->scene, self->position, Vec2_Rotate(as->source, -M_PI_2), BULLET_FIGHTER, 90.0f, BOSS_DAMAGES);
+		bullet->texture = self->scene->assets->fighterSpecial;
+		Scene_AppendBullet(self->scene, bullet);
 
-		Scene_AppendBullet(self->scene, Bullet_New(self->scene, self->position, as->source2, BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
-		Scene_AppendBullet(self->scene, Bullet_New(self->scene, self->position, Vec2_Rotate(as->source2, M_PI_2), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
-		Scene_AppendBullet(self->scene, Bullet_New(self->scene, self->position, Vec2_Rotate(as->source2, M_PI), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
-		Scene_AppendBullet(self->scene, Bullet_New(self->scene, self->position, Vec2_Rotate(as->source2, -M_PI_2), BULLET_FIGHTER, 90.0f, NORMAL_DAMAGES));
+		bullet = Bullet_New(self->scene, self->position, as->source2, BULLET_FIGHTER, 90.0f, BOSS_DAMAGES);
+		bullet->texture = self->scene->assets->fighterSpecial;
+		Scene_AppendBullet(self->scene, bullet);
+		bullet = Bullet_New(self->scene, self->position, Vec2_Rotate(as->source2, M_PI_2), BULLET_FIGHTER, 90.0f, BOSS_DAMAGES);
+		bullet->texture = self->scene->assets->fighterSpecial;
+		Scene_AppendBullet(self->scene, bullet);
+		bullet = Bullet_New(self->scene, self->position, Vec2_Rotate(as->source2, M_PI), BULLET_FIGHTER, 90.0f, BOSS_DAMAGES);
+		bullet->texture = self->scene->assets->fighterSpecial;
+		Scene_AppendBullet(self->scene, bullet);
+		bullet = Bullet_New(self->scene, self->position, Vec2_Rotate(as->source2, -M_PI_2), BULLET_FIGHTER, 90.0f, BOSS_DAMAGES);
+		bullet->texture = self->scene->assets->fighterSpecial;
+		Scene_AppendBullet(self->scene, bullet);
 		as->source = Vec2_Rotate(as->source, 0.5);
 		as->source2 = Vec2_Rotate(as->source2, -0.5);
 		as->sourceTime = 0;

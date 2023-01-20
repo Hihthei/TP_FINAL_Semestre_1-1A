@@ -65,6 +65,16 @@ typedef struct Assets_s
 	/// @brief Blinking message when the user finished all the levels.
 	SDL_Texture *wonScreenMessage;
 
+	SDL_Texture *boss;
+
+	SDL_Texture *superBoss;
+
+	SDL_Texture *fighterAttack2;
+
+	SDL_Texture *fighter2;
+
+	SDL_Texture *fighterSpecial;
+
 	///@brief Total anims available in the assets.
 	Animation *animations[SCENE_ANIM_NUM_MAX];
 	TextureSpec animationsToLoad[SCENE_ANIM_NUM_MAX][ANIM_TEXTURES_MAX];

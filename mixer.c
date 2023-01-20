@@ -33,7 +33,13 @@ struct SoundSet_t
 void mixer_load(Mixer *self)
 {
 	struct SoundSet_t sources[] = {
-		{BackgroundSound, "../Assets/Music/background.wav"}
+	{BackgroundSound, "../Assets/Music/background.wav"},
+	{DestructionSound, "../Assets/Music/explosion.wav"},
+	{ApparitionSound, "../Assets/Music/apparition.wav"},
+	{CollisionSound, "../Assets/Music/explosion.wav"},
+	{PlayerShotSound, "../Assets/Music/base_piou.wav"},
+	{PlayerSpecialShotSound, "../Assets/Music/special_attack.wav"},
+	{FighterShotSound, "../Assets/Music/base_piou.wav"},
 	};
 
 	int length = sizeof(sources)/sizeof(struct SoundSet_t);
